@@ -3,23 +3,23 @@ import {Router} from '@vaadin/router';
 export const routes = [
   {
     path: '/',
-    component: 'user-list',
+    component: 'employees-page',
     action: async () => {
-      await import('../views/user-list.js');
+      await import('../views/employees-page.js');
     },
   },
   {
-    path: '/add-user',
-    component: 'add-user',
+    path: '/add-employee',
+    component: 'add-employee-page',
     action: async () => {
-      await import('../views/add-user.js');
+      await import('../views/add-employee-page.js');
     },
   },
   {
-    path: '/edit-user',
-    component: 'edit-user',
+    path: '/edit-employee',
+    component: 'edit-employee-page',
     action: async () => {
-      await import('../views/edit-user.js');
+      await import('../views/edit-employee-page.js');
     },
   },
 ];
