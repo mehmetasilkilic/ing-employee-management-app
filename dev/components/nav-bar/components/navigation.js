@@ -37,7 +37,6 @@ export class Navigation extends LitElement {
       color: #ffa07a;
       font-size: 1rem;
       cursor: pointer;
-      transition: color 0.3s ease;
       text-decoration: none;
       display: flex;
       align-items: center;
@@ -85,7 +84,7 @@ export class Navigation extends LitElement {
               class="nav-button ${this.isActive(item.path)}"
             >
               <custom-icon icon="${item.icon}" size="18px"></custom-icon>
-              ${item.text}
+              <span> ${item.text} </span>
             </a>
           `
         )}

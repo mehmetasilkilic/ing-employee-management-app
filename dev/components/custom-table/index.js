@@ -1,8 +1,8 @@
 import {LitElement, html} from 'lit';
 
-import {tableStyles} from './styles/table-styles.js';
+import {tableStyles} from './table-styles.js';
 
-import './pagination.js';
+import './components/pagination.js';
 
 export class CustomTable extends LitElement {
   static properties = {

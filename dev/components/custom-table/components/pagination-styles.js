@@ -26,7 +26,6 @@ export const paginationStyles = css`
     background-color: transparent;
     border-radius: 100%;
     cursor: pointer;
-    transition: all 0.2s ease;
   }
 
   .pagination-button:hover:not(:disabled),

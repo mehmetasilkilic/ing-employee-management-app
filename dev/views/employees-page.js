@@ -19,13 +19,6 @@ export class EmployeesPage extends LitElement {
     h1 {
       color: #333;
     }
-
-    .selected-info {
-      margin: 1rem 0;
-      padding: 0.5rem;
-      background-color: #f0f0f0;
-      border-radius: 4px;
-    }
   `;
 
   constructor() {

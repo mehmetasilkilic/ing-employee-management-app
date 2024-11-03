@@ -1,8 +1,8 @@
 import {LitElement, html} from 'lit';
 
-import {paginationStyles} from './styles/pagination-styles.js';
+import {paginationStyles} from './pagination-styles.js';
 
-import '../custom-icon';
+import '../../custom-icon.js';
 
 export class TablePagination extends LitElement {
   static styles = paginationStyles;

@@ -25,13 +25,6 @@ export class CustomIcon extends LitElement {
       font-style: normal;
       font-size: var(--icon-size, 24px);
       display: inline-block;
-      line-height: 1;
-      text-transform: none;
-      letter-spacing: normal;
-      word-wrap: normal;
-      white-space: nowrap;
-      direction: ltr;
-      transition: color 0.3s ease;
       color: currentColor;
     }
   `;
