@@ -80,7 +80,7 @@ export class FormBuilder extends LitElement {
 
     button:disabled {
       background-color: #ccc;
-      cursor: not-allowed;
+      cursor: default;
     }
 
     @media (max-width: 768px) {

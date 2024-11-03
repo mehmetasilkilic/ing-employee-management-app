@@ -35,7 +35,7 @@ export const paginationStyles = css`
 
   .pagination-button:disabled,
   .nav-btn:disabled {
-    cursor: not-allowed;
+    cursor: default;
   }
 
   .nav-btn:disabled {

@@ -36,7 +36,7 @@ export class ActionButtons extends LitElement {
 
     .action-button:disabled {
       opacity: 0.5;
-      cursor: not-allowed;
+      cursor: default;
       transform: none;
     }
   `;

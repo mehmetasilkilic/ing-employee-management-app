@@ -49,7 +49,7 @@ export class Navigation extends LitElement {
 
     .nav-button.active {
       color: var(--primary-color);
-      cursor: not-allowed;
+      cursor: default;
       font-weight: 500;
     }
   `;

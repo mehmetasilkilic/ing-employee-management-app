@@ -44,7 +44,7 @@ export class EmployeesPage extends LitElement {
 
     .view-toggle button.active {
       color: var(--primary-color);
-      cursor: not-allowed;
+      cursor: default;
     }
 
     .view-toggle button:hover:not(.active) {

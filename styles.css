@@ -7,8 +7,8 @@
 }
 
 html {
-  --primary-color: #ff8800;
-  --hover-primary: #ff6200;
+  --primary-color: #ff6f00;
+  --hover-primary: #ff3300;
   --disabled-primary: #ffa07a;
   --border-color: #e5e7eb;
   --hover-bg: #f1f5f9;
@@ -65,9 +65,12 @@ video {
 }
 
 button {
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
   background: none;
   border: none;
-  padding: 0;
   cursor: pointer;
 }
 
