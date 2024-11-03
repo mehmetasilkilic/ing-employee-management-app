@@ -16,7 +16,7 @@ export const routes = [
     },
   },
   {
-    path: '/edit-employee',
+    path: '/edit-employee/:id',
     component: 'edit-employee-page',
     action: async () => {
       await import('../views/edit-employee-page.js');

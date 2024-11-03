@@ -1,4 +1,5 @@
 import {LitElement, html, css} from 'lit';
+import {Router} from '@vaadin/router';
 
 import '../components/custom-table/index.js';
 import '../components/custom-icon.js';
@@ -39,8 +40,8 @@ export class EmployeesPage extends LitElement {
         dateOfBirth: '1999-01-15',
         phone: '+90 555 555 55 55',
         email: 'john@example.com',
-        department: 'Engineering',
-        position: 'Junior',
+        department: 1,
+        position: 1,
       },
       {
         id: 2,
@@ -50,8 +51,8 @@ export class EmployeesPage extends LitElement {
         dateOfBirth: '1999-01-15',
         phone: '+90 555 555 55 55',
         email: 'jane@example.com',
-        department: 'Product',
-        position: 'Senior',
+        department: 2,
+        position: 2,
       },
     ];
 
@@ -59,8 +60,9 @@ export class EmployeesPage extends LitElement {
   }
 
   handleEdit(employee) {
-    console.log('Edit employee:', employee);
-    // Implement edit logic
+    sessionStorage.setItem('editEmployee', JSON.stringify(employee));
+
+    Router.go(`/edit-employee/${employee.id}`);
   }
 
   handleDelete(employee) {

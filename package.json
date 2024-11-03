@@ -40,7 +40,8 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "@vaadin/router": "^2.0.0",
-    "lit": "^3.2.0"
+    "lit": "^3.2.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@11ty/eleventy": "^1.0.1",
