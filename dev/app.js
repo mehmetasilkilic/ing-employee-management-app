@@ -1,6 +1,6 @@
 import {LitElement, html, css} from 'lit';
 
-import {router} from './config/router.js';
+import {router, routes} from './config/router.js';
 
 import './components/nav-bar/index.js';
 
@@ -20,6 +20,7 @@ export class AppRoot extends LitElement {
   firstUpdated() {
     const outlet = this.shadowRoot.getElementById('outlet');
     router.setOutlet(outlet);
+    router.setRoutes(routes);
   }
 
   handleLanguageChange(e) {
@@ -29,7 +30,6 @@ export class AppRoot extends LitElement {
   render() {
     return html`
       <nav-bar @language-change="${this.handleLanguageChange}"></nav-bar>
-
       <main id="outlet"></main>
     `;
   }
