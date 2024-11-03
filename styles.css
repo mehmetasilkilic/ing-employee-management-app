@@ -6,6 +6,17 @@
   padding: 0;
 }
 
+html {
+  --primary-color: #ff8800;
+  --hover-primary: #ff6200;
+  --disabled-primary: #ffa07a;
+  --border-color: #e5e7eb;
+  --hover-bg: #f1f5f9;
+  --disabled-bg: #f1f1f1;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+}
+
 html,
 body {
   width: 100%;

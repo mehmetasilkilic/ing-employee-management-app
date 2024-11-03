@@ -1,4 +1,5 @@
 import {LitElement, html, css} from 'lit';
+
 import '../../custom-icon';
 
 export class Navigation extends LitElement {

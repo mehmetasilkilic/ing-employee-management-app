@@ -8,12 +8,12 @@ export class AppRoot extends LitElement {
   static styles = css`
     :host {
       display: block;
+    }
 
-      #outlet {
-        width: 100%;
-        height: calc(100vh - 64px);
-        overflow-y: auto;
-      }
+    #outlet {
+      margin: 0 1.5rem;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
     }
   `;
 
