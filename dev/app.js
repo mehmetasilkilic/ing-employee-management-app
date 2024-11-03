@@ -5,10 +5,6 @@ export class AppRoot extends LitElement {
   static styles = css`
     :host {
       display: block;
-      min-height: 100vh;
-    }
-    main {
-      padding: 20px;
     }
   `;
 
