@@ -34,7 +34,7 @@ export class Navigation extends LitElement {
       padding: 0 1rem;
       border: none;
       background: none;
-      color: #ffa07a;
+      color: var(--disabled-primary);
       font-size: 1rem;
       cursor: pointer;
       text-decoration: none;
@@ -44,11 +44,12 @@ export class Navigation extends LitElement {
     }
 
     .nav-button:hover {
-      color: #ff8c00;
+      color: var(--hover-primary);
     }
 
     .nav-button.active {
-      color: #ff7300;
+      color: var(--primary-color);
+      cursor: not-allowed;
       font-weight: 500;
     }
   `;
