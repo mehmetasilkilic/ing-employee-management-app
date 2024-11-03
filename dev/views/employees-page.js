@@ -1,7 +1,8 @@
 import {LitElement, html, css} from 'lit';
 import {Router} from '@vaadin/router';
 
-import '../components/custom-table/index.js';
+import '../components/custom-table.js';
+import '../components/custom-list.js';
 import '../components/custom-icon.js';
 import '../components/action-buttons.js';
 
@@ -10,7 +11,7 @@ export class EmployeesPage extends LitElement {
     employees: {type: Array},
     loading: {type: Boolean},
     selectedEmployees: {type: Array},
-    viewMode: {type: String}, // Add viewMode property
+    viewMode: {type: String},
   };
 
   static styles = css`
@@ -49,12 +50,6 @@ export class EmployeesPage extends LitElement {
 
     .view-toggle button:hover:not(.active) {
       color: var(--hover-primary);
-    }
-
-    .list-view {
-      padding: 16px;
-      background: #f5f5f5;
-      border-radius: 4px;
     }
   `;
 
@@ -147,11 +142,23 @@ export class EmployeesPage extends LitElement {
       },
       {
         header: 'Department',
-        field: 'department',
+        template: (employee) =>
+          employee.department === 1
+            ? 'Analytics'
+            : employee.department === 2
+            ? 'Tech'
+            : '-',
       },
       {
         header: 'Position',
-        field: 'position',
+        template: (employee) =>
+          employee.position === 1
+            ? 'Junior'
+            : employee.position === 2
+            ? 'Medior'
+            : employee.position === 3
+            ? 'Senior'
+            : '-',
       },
       {
         header: 'Actions',
@@ -212,13 +219,21 @@ export class EmployeesPage extends LitElement {
           ? html` <custom-table
               .columns=${this.tableColumns}
               .data=${this.employees}
-              .pageSize=${10}
+              .pageSize=${12}
               .totalItems=${100}
               .selectedItems=${this.selectedEmployees}
               @page-change=${this.handlePageChange}
               @selection-change=${this.handleSelectionChange}
             ></custom-table>`
-          : html`<div class="list-view">List View</div>`}
+          : html` <custom-list
+              .columns=${this.tableColumns}
+              .data=${this.employees}
+              .pageSize=${12}
+              .totalItems=${100}
+              .selectedItems=${this.selectedEmployees}
+              @page-change=${this.handlePageChange}
+              @selection-change=${this.handleSelectionChange}
+            ></custom-list>`}
       </div>
     `;
   }

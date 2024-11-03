@@ -1,12 +1,65 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, css} from 'lit';
 
-import {paginationStyles} from './pagination-styles.js';
-
-import '../../custom-icon.js';
+import './custom-icon.js';
 
 export class TablePagination extends LitElement {
-  static styles = paginationStyles;
+  static styles = css`
+    .pagination-container {
+      padding: 1rem;
+    }
 
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pagination-button,
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 2rem;
+      width: 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      color: var(--text-primary);
+      background-color: transparent;
+      border-radius: 100%;
+      cursor: pointer;
+    }
+
+    .pagination-button:hover:not(:disabled),
+    .nav-btn:hover:not(:disabled) {
+      color: var(--primary-color);
+    }
+
+    .pagination-button:disabled,
+    .nav-btn:disabled {
+      cursor: default;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+    }
+
+    .pagination-button.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .pagination-ellipsis {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 2.25rem;
+      min-width: 2.25rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+  `;
   static properties = {
     currentPage: {type: Number},
     totalPages: {type: Number},
