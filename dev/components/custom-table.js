@@ -85,7 +85,6 @@ export class CustomTable extends LitElement {
       color: var(--text-secondary);
     }
 
-    /* Custom scrollbar styles */
     .table-scroll-container::-webkit-scrollbar {
       width: 8px;
     }

@@ -211,6 +211,7 @@ export class EmployeesPage extends LitElement {
             : html` <custom-list
                 .columns=${this.tableColumns}
                 .data=${this.employees}
+                maxHeight=${'29rem'}
                 .pageSize=${12}
                 .totalItems=${100}
                 .selectedItems=${this.selectedEmployees}

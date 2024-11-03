@@ -11,11 +11,48 @@ export class CustomCardList extends LitElement {
     currentPage: {type: Number},
     totalItems: {type: Number},
     selectedItems: {type: Array},
+    maxHeight: {type: String},
   };
 
   static styles = css`
     :host {
       display: block;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .fixed-header {
+      background: white;
+      padding: 1rem 1rem 0.5rem 1rem;
+      border-bottom: 1px solid var(--border-color, #eee);
+    }
+
+    .scroll-container {
+      overflow-y: auto;
+      max-height: var(--list-max-height, 600px);
+      background: white;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .scroll-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
 
     .card-grid {
@@ -27,11 +64,9 @@ export class CustomCardList extends LitElement {
     }
 
     .checkbox-wrapper {
-      margin-bottom: 1rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0 1rem;
     }
 
     .empty-state {
@@ -47,6 +82,11 @@ export class CustomCardList extends LitElement {
       cursor: pointer;
       margin: 0;
     }
+
+    .fixed-footer {
+      background: white;
+      padding: 0.5rem;
+    }
   `;
 
   constructor() {
@@ -57,6 +97,13 @@ export class CustomCardList extends LitElement {
     this.currentPage = 1;
     this.totalItems = 0;
     this.selectedItems = undefined;
+    this.maxHeight = '600px';
+  }
+
+  updated(changedProperties) {
+    if (changedProperties.has('maxHeight')) {
+      this.style.setProperty('--list-max-height', this.maxHeight);
+    }
   }
 
   get totalPages() {
@@ -127,44 +174,50 @@ export class CustomCardList extends LitElement {
 
   render() {
     return html`
-      ${this.hasSelection
-        ? html`
-            <div class="checkbox-wrapper">
-              <input
-                type="checkbox"
-                .checked=${this.isAllSelected()}
-                @change=${this.handleSelectAll}
-              />
-              <span>Select All</span>
-            </div>
-          `
-        : ''}
+      <div class="container">
+        ${this.hasSelection
+          ? html`
+              <div class="fixed-header">
+                <div class="checkbox-wrapper">
+                  <input
+                    type="checkbox"
+                    .checked=${this.isAllSelected()}
+                    @change=${this.handleSelectAll}
+                  />
+                  <span>Select All</span>
+                </div>
+              </div>
+            `
+          : ''}
 
-      <div class="card-grid">
-        ${!this.data.length
-          ? html`<div class="empty-state">No data available</div>`
-          : this.data.map(
-              (item) => html`
-                <custom-card
-                  .item=${item}
-                  .columns=${this.columns}
-                  .selected=${this.isItemSelected(item)}
-                  .hasSelection=${this.hasSelection}
-                  @card-select=${this.handleCardSelect}
-                ></custom-card>
-              `
-            )}
+        <div class="scroll-container">
+          <div class="card-grid">
+            ${!this.data.length
+              ? html`<div class="empty-state">No data available</div>`
+              : this.data.map(
+                  (item) => html`
+                    <custom-card
+                      .item=${item}
+                      .columns=${this.columns}
+                      .selected=${this.isItemSelected(item)}
+                      .hasSelection=${this.hasSelection}
+                      @card-select=${this.handleCardSelect}
+                    ></custom-card>
+                  `
+                )}
+          </div>
+        </div>
+
+        ${this.totalItems
+          ? html`
+              <table-pagination
+                .currentPage=${this.currentPage}
+                .totalPages=${this.totalPages}
+                @page-change=${this.handlePageChange}
+              ></table-pagination>
+            `
+          : ''}
       </div>
-
-      ${this.totalItems
-        ? html`
-            <table-pagination
-              .currentPage=${this.currentPage}
-              .totalPages=${this.totalPages}
-              @page-change=${this.handlePageChange}
-            ></table-pagination>
-          `
-        : ''}
     `;
   }
 }
