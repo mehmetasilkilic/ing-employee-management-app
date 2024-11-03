@@ -12,8 +12,6 @@ export class AppRoot extends LitElement {
 
     #outlet {
       margin: 0 1.5rem;
-      height: calc(100vh - 64px);
-      overflow-y: auto;
     }
   `;
 

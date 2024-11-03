@@ -19,6 +19,14 @@ export class EmployeesPage extends LitElement {
       display: block;
     }
 
+    .container {
+      color: var(--bg);
+    }
+
+    .table-container {
+      padding: 0 2rem;
+    }
+
     .title {
       color: var(--primary-color);
       margin: 0;
@@ -28,7 +36,7 @@ export class EmployeesPage extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 0;
+      padding: 1rem 2rem;
     }
 
     .view-toggle {
@@ -168,7 +176,7 @@ export class EmployeesPage extends LitElement {
     }
 
     return html`
-      <div>
+      <div classname="container">
         <div class="top-section">
           <h2 class="title">Employees</h2>
           <div class="view-toggle">
@@ -188,26 +196,28 @@ export class EmployeesPage extends LitElement {
           </div>
         </div>
 
-        ${this.viewMode === 'table'
-          ? html` <custom-table
-              .columns=${this.tableColumns}
-              .data=${this.employees}
-              maxHeight=${'28rem'}
-              .pageSize=${12}
-              .totalItems=${100}
-              .selectedItems=${this.selectedEmployees}
-              @page-change=${this.handlePageChange}
-              @selection-change=${this.handleSelectionChange}
-            ></custom-table>`
-          : html` <custom-list
-              .columns=${this.tableColumns}
-              .data=${this.employees}
-              .pageSize=${12}
-              .totalItems=${100}
-              .selectedItems=${this.selectedEmployees}
-              @page-change=${this.handlePageChange}
-              @selection-change=${this.handleSelectionChange}
-            ></custom-list>`}
+        <div class="table-container">
+          ${this.viewMode === 'table'
+            ? html` <custom-table
+                .columns=${this.tableColumns}
+                .data=${this.employees}
+                maxHeight=${'28rem'}
+                .pageSize=${12}
+                .totalItems=${100}
+                .selectedItems=${this.selectedEmployees}
+                @page-change=${this.handlePageChange}
+                @selection-change=${this.handleSelectionChange}
+              ></custom-table>`
+            : html` <custom-list
+                .columns=${this.tableColumns}
+                .data=${this.employees}
+                .pageSize=${12}
+                .totalItems=${100}
+                .selectedItems=${this.selectedEmployees}
+                @page-change=${this.handlePageChange}
+                @selection-change=${this.handleSelectionChange}
+              ></custom-list>`}
+        </div>
       </div>
     `;
   }
