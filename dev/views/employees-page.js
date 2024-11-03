@@ -10,6 +10,7 @@ export class EmployeesPage extends LitElement {
     employees: {type: Array},
     loading: {type: Boolean},
     selectedEmployees: {type: Array},
+    viewMode: {type: String}, // Add viewMode property
   };
 
   static styles = css`
@@ -20,6 +21,41 @@ export class EmployeesPage extends LitElement {
     h1 {
       color: #333;
     }
+
+    .top-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 8px;
+    }
+
+    .view-toggle button {
+      color: var(--disabled-primary);
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .view-toggle button.active {
+      color: var(--primary-color);
+      cursor: not-allowed;
+    }
+
+    .view-toggle button:hover:not(.active) {
+      color: var(--hover-primary);
+    }
+
+    .list-view {
+      padding: 16px;
+      background: #f5f5f5;
+      border-radius: 4px;
+    }
   `;
 
   constructor() {
@@ -27,6 +63,7 @@ export class EmployeesPage extends LitElement {
     this.employees = [];
     this.loading = true;
     this.selectedEmployees = [];
+    this.viewMode = 'table';
     this.fetchEmployees();
   }
 
@@ -61,7 +98,6 @@ export class EmployeesPage extends LitElement {
 
   handleEdit(employee) {
     sessionStorage.setItem('editEmployee', JSON.stringify(employee));
-
     Router.go(`/edit-employee/${employee.id}`);
   }
 
@@ -72,11 +108,15 @@ export class EmployeesPage extends LitElement {
 
   handlePageChange(e) {
     console.log('Page changed:', e.detail.page);
-    // Implement page change logic (e.g., fetch new data from server)
+    // Implement page change logic
   }
 
   handleSelectionChange(e) {
     this.selectedEmployees = e.detail.selectedItems;
+  }
+
+  setViewMode(mode) {
+    this.viewMode = mode;
   }
 
   get tableColumns() {
@@ -147,17 +187,39 @@ export class EmployeesPage extends LitElement {
     }
 
     return html`
-      <h1>Employees</h1>
+      <div>
+        <div class="top-section">
+          <h1>Employees</h1>
 
-      <custom-table
-        .columns=${this.tableColumns}
-        .data=${this.employees}
-        .pageSize=${10}
-        .totalItems=${100}
-        .selectedItems=${this.selectedEmployees}
-        @page-change=${this.handlePageChange}
-        @selection-change=${this.handleSelectionChange}
-      ></custom-table>
+          <div class="view-toggle">
+            <button
+              class=${this.viewMode === 'table' ? 'active' : ''}
+              @click=${() => this.setViewMode('table')}
+            >
+              <custom-icon icon="reorder" size="36px"></custom-icon>
+            </button>
+
+            <button
+              class=${this.viewMode === 'list' ? 'active' : ''}
+              @click=${() => this.setViewMode('list')}
+            >
+              <custom-icon icon="apps" size="36px"></custom-icon>
+            </button>
+          </div>
+        </div>
+
+        ${this.viewMode === 'table'
+          ? html` <custom-table
+              .columns=${this.tableColumns}
+              .data=${this.employees}
+              .pageSize=${10}
+              .totalItems=${100}
+              .selectedItems=${this.selectedEmployees}
+              @page-change=${this.handlePageChange}
+              @selection-change=${this.handleSelectionChange}
+            ></custom-table>`
+          : html`<div class="list-view">List View</div>`}
+      </div>
     `;
   }
 }
