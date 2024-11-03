@@ -19,27 +19,28 @@ export class EmployeesPage extends LitElement {
       display: block;
     }
 
-    h1 {
-      color: #333;
+    .title {
+      color: var(--primary-color);
+      margin: 0;
     }
 
     .top-section {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 1rem 0;
     }
 
     .view-toggle {
       display: flex;
-      gap: 8px;
+      gap: 0.5rem;
     }
 
     .view-toggle button {
       color: var(--disabled-primary);
       cursor: pointer;
-      background-color: transparent;
+      background: none;
       border: none;
-      margin: 0;
       padding: 0;
     }
 
@@ -115,50 +116,23 @@ export class EmployeesPage extends LitElement {
   }
 
   get tableColumns() {
+    const departmentMap = {1: 'Analytics', 2: 'Tech'};
+    const positionMap = {1: 'Junior', 2: 'Medior', 3: 'Senior'};
+
     return [
-      {
-        header: 'First Name',
-        field: 'firstName',
-      },
-      {
-        header: 'Last Name',
-        field: 'lastName',
-      },
-      {
-        header: 'Date of Employment',
-        field: 'dateOfEmployment',
-      },
-      {
-        header: 'Date of Birth',
-        field: 'dateOfBirth',
-      },
-      {
-        header: 'Phone',
-        field: 'phone',
-      },
-      {
-        header: 'Email',
-        field: 'email',
-      },
+      {header: 'First Name', field: 'firstName'},
+      {header: 'Last Name', field: 'lastName'},
+      {header: 'Date of Employment', field: 'dateOfEmployment'},
+      {header: 'Date of Birth', field: 'dateOfBirth'},
+      {header: 'Phone', field: 'phone'},
+      {header: 'Email', field: 'email'},
       {
         header: 'Department',
-        template: (employee) =>
-          employee.department === 1
-            ? 'Analytics'
-            : employee.department === 2
-            ? 'Tech'
-            : '-',
+        template: (employee) => departmentMap[employee.department] || '-',
       },
       {
         header: 'Position',
-        template: (employee) =>
-          employee.position === 1
-            ? 'Junior'
-            : employee.position === 2
-            ? 'Medior'
-            : employee.position === 3
-            ? 'Senior'
-            : '-',
+        template: (employee) => positionMap[employee.position] || '-',
       },
       {
         header: 'Actions',
@@ -196,8 +170,7 @@ export class EmployeesPage extends LitElement {
     return html`
       <div>
         <div class="top-section">
-          <h1>Employees</h1>
-
+          <h2 class="title">Employees</h2>
           <div class="view-toggle">
             <button
               class=${this.viewMode === 'table' ? 'active' : ''}
@@ -219,6 +192,7 @@ export class EmployeesPage extends LitElement {
           ? html` <custom-table
               .columns=${this.tableColumns}
               .data=${this.employees}
+              maxHeight=${'28rem'}
               .pageSize=${12}
               .totalItems=${100}
               .selectedItems=${this.selectedEmployees}

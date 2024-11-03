@@ -20,28 +20,32 @@ export class CustomCardList extends LitElement {
 
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin-bottom: 20px;
+      gap: 1rem;
       padding: 1rem;
       background: white;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 
     .checkbox-wrapper {
       margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 1rem;
     }
 
     .empty-state {
       grid-column: 1 / -1;
-      padding: 3rem 1rem;
+      padding: 2rem;
       text-align: center;
       color: var(--text-secondary);
     }
 
     input[type='checkbox'] {
-      width: 16px;
-      height: 16px;
+      width: 1rem;
+      height: 1rem;
       cursor: pointer;
+      margin: 0;
     }
   `;
 
@@ -57,12 +61,6 @@ export class CustomCardList extends LitElement {
 
   get totalPages() {
     return Math.ceil(this.totalItems / this.pageSize);
-  }
-
-  get currentPageData() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    return this.data.slice(start, end);
   }
 
   get hasSelection() {
@@ -85,49 +83,45 @@ export class CustomCardList extends LitElement {
     if (!this.hasSelection) return;
 
     const isChecked = e.target.checked;
-    const newSelectedItems = isChecked ? [...this.currentPageData] : [];
-    this.selectedItems = newSelectedItems;
-    this.dispatchEvent(
-      new CustomEvent('selection-change', {
-        detail: {selectedItems: this.selectedItems},
-      })
-    );
+    this.selectedItems = isChecked ? [...this.data] : [];
+    this._dispatchSelectionChange();
   }
 
   handleCardSelect(e) {
     if (!this.hasSelection) return;
 
     const {item, selected} = e.detail;
-    let newSelectedItems;
+    this.selectedItems = selected
+      ? [...this.selectedItems, item]
+      : this.selectedItems.filter(
+          (selectedItem) => selectedItem.id !== item.id
+        );
 
-    if (selected) {
-      newSelectedItems = [...this.selectedItems, item];
-    } else {
-      newSelectedItems = this.selectedItems.filter(
-        (selectedItem) => selectedItem.id !== item.id
-      );
-    }
+    this._dispatchSelectionChange();
+  }
 
-    this.selectedItems = newSelectedItems;
+  _dispatchSelectionChange() {
     this.dispatchEvent(
       new CustomEvent('selection-change', {
         detail: {selectedItems: this.selectedItems},
+        bubbles: true,
+        composed: true,
       })
     );
   }
 
   isItemSelected(item) {
-    if (!this.hasSelection) return false;
-    return this.selectedItems.some(
-      (selectedItem) => selectedItem.id === item.id
+    return (
+      this.hasSelection &&
+      this.selectedItems.some((selected) => selected.id === item.id)
     );
   }
 
   isAllSelected() {
-    if (!this.hasSelection) return false;
     return (
-      this.currentPageData.length > 0 &&
-      this.currentPageData.every((item) => this.isItemSelected(item))
+      this.hasSelection &&
+      this.data.length > 0 &&
+      this.data.every((item) => this.isItemSelected(item))
     );
   }
 
@@ -141,15 +135,15 @@ export class CustomCardList extends LitElement {
                 .checked=${this.isAllSelected()}
                 @change=${this.handleSelectAll}
               />
-              Select All
+              <span>Select All</span>
             </div>
           `
         : ''}
 
       <div class="card-grid">
-        ${this.currentPageData.length === 0
+        ${!this.data.length
           ? html`<div class="empty-state">No data available</div>`
-          : this.currentPageData.map(
+          : this.data.map(
               (item) => html`
                 <custom-card
                   .item=${item}

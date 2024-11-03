@@ -10,22 +10,34 @@ export class CustomTable extends LitElement {
     currentPage: {type: Number},
     totalItems: {type: Number},
     selectedItems: {type: Array},
+    maxHeight: {type: String},
   };
 
   static styles = css`
-    :host {
-      display: block;
-    }
-
     .table-container {
       background: white;
-      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-scroll-container {
+      overflow-y: auto;
+      max-height: var(--table-max-height, 400px);
     }
 
     .data-table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       font-size: 0.875rem;
+    }
+
+    .header-container {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: white;
     }
 
     .table-header {
@@ -39,7 +51,7 @@ export class CustomTable extends LitElement {
 
     .table-cell {
       text-align: center;
-      padding: 2rem 0.5rem;
+      padding: 1.5rem 0.5rem;
       border-bottom: 1px solid var(--border-color);
     }
 
@@ -49,9 +61,10 @@ export class CustomTable extends LitElement {
     }
 
     input[type='checkbox'] {
-      width: 16px;
-      height: 16px;
+      width: 1rem;
+      height: 1rem;
       cursor: pointer;
+      margin: 0;
     }
 
     .table-row:last-child .table-cell {
@@ -71,30 +84,53 @@ export class CustomTable extends LitElement {
       text-align: center;
       color: var(--text-secondary);
     }
+
+    /* Custom scrollbar styles */
+    .table-scroll-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .table-scroll-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .table-scroll-container::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    .table-scroll-container::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
   `;
 
   constructor() {
     super();
+    this.initializeProperties();
+  }
+
+  initializeProperties() {
     this.columns = [];
     this.data = [];
     this.pageSize = 10;
     this.currentPage = 1;
     this.totalItems = 0;
     this.selectedItems = undefined;
+    this.maxHeight = '700px';
   }
 
-  get totalPages() {
-    return Math.ceil(this.totalItems / this.pageSize);
-  }
-
-  get currentPageData() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    return this.data.slice(start, end);
+  updated(changedProperties) {
+    if (changedProperties.has('maxHeight')) {
+      this.style.setProperty('--table-max-height', this.maxHeight);
+    }
   }
 
   get hasSelection() {
     return Array.isArray(this.selectedItems);
+  }
+
+  get totalPages() {
+    return Math.ceil(this.totalItems / this.pageSize);
   }
 
   handlePageChange(e) {
@@ -113,7 +149,7 @@ export class CustomTable extends LitElement {
     if (!this.hasSelection) return;
 
     const isChecked = e.target.checked;
-    const newSelectedItems = isChecked ? [...this.currentPageData] : [];
+    const newSelectedItems = isChecked ? [...this.data] : [];
     this.selectedItems = newSelectedItems;
     this.dispatchEvent(
       new CustomEvent('selection-change', {
@@ -154,8 +190,8 @@ export class CustomTable extends LitElement {
   isAllSelected() {
     if (!this.hasSelection) return false;
     return (
-      this.currentPageData.length > 0 &&
-      this.currentPageData.every((item) => this.isItemSelected(item))
+      this.data.length > 0 &&
+      this.data.every((item) => this.isItemSelected(item))
     );
   }
 
@@ -174,69 +210,75 @@ export class CustomTable extends LitElement {
   render() {
     return html`
       <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              ${this.hasSelection
-                ? html`
-                    <th class="table-header table-cell checkbox-cell">
-                      <input
-                        type="checkbox"
-                        .checked=${this.isAllSelected()}
-                        @change=${this.handleSelectAll}
-                      />
-                    </th>
-                  `
-                : ''}
-              ${this.columns.map(
-                (column) => html`
-                  <th class="table-header table-cell" scope="col">
-                    ${column.header}
-                  </th>
-                `
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            ${this.currentPageData.length === 0
-              ? html`
-                  <tr class="table-row">
-                    <td
-                      colspan="${this.hasSelection
-                        ? this.columns.length + 1
-                        : this.columns.length}"
-                      class="empty-state"
-                    >
-                      No data available
-                    </td>
-                  </tr>
-                `
-              : this.currentPageData.map(
-                  (item) => html`
-                    <tr class="table-row">
-                      ${this.hasSelection
-                        ? html`
-                            <td class="table-cell checkbox-cell">
-                              <input
-                                type="checkbox"
-                                .checked=${this.isItemSelected(item)}
-                                @change=${(e) => this.handleSelectItem(item, e)}
-                              />
-                            </td>
-                          `
-                        : ''}
-                      ${this.columns.map(
-                        (column) => html`
-                          <td class="table-cell">
-                            ${this.renderCell(item, column)}
-                          </td>
-                        `
-                      )}
-                    </tr>
+        <div class="header-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                ${this.hasSelection
+                  ? html`
+                      <th class="table-header table-cell checkbox-cell">
+                        <input
+                          type="checkbox"
+                          .checked=${this.isAllSelected()}
+                          @change=${(e) =>
+                            this.handleSelection(true, null, e.target.checked)}
+                        />
+                      </th>
+                    `
+                  : ''}
+                ${this.columns.map(
+                  (column) => html`
+                    <th class="table-header table-cell">${column.header}</th>
                   `
                 )}
-          </tbody>
-        </table>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div class="table-scroll-container">
+          <table class="data-table">
+            <tbody>
+              ${!this.data.length
+                ? html`
+                    <tr class="table-row">
+                      <td
+                        colspan=${this.hasSelection
+                          ? this.columns.length + 1
+                          : this.columns.length}
+                        class="empty-state"
+                      >
+                        No data available
+                      </td>
+                    </tr>
+                  `
+                : this.data.map(
+                    (item) => html`
+                      <tr class="table-row">
+                        ${this.hasSelection
+                          ? html`
+                              <td class="table-cell checkbox-cell">
+                                <input
+                                  type="checkbox"
+                                  .checked=${this.isItemSelected(item)}
+                                  @change=${(e) =>
+                                    this.handleSelectItem(item, e)}
+                                />
+                              </td>
+                            `
+                          : ''}
+                        ${this.columns.map(
+                          (column) => html`
+                            <td class="table-cell">
+                              ${this.renderCell(item, column)}
+                            </td>
+                          `
+                        )}
+                      </tr>
+                    `
+                  )}
+            </tbody>
+          </table>
+        </div>
       </div>
       ${this.totalItems
         ? html`

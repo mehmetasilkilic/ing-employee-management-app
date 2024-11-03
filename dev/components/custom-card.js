@@ -9,22 +9,18 @@ export class CustomCard extends LitElement {
   };
 
   static styles = css`
-    :host {
-      display: block;
-    }
-
     .card {
       background: white;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       padding: 1rem;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease;
       display: flex;
       flex-direction: column;
     }
 
     .card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background: var(--hover-bg);
     }
 
     .card-content {
@@ -36,19 +32,20 @@ export class CustomCard extends LitElement {
     }
 
     .card-label {
-      color: #333;
+      color: var(--text-primary);
       font-size: 0.875rem;
       white-space: nowrap;
     }
 
     .card-value {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.875rem;
-      font-weight: 600;
+      font-weight: 500;
+      word-break: break-word;
     }
 
-    .card-bottom-section {
-      border-top: 1px solid var(--border-color, #eee);
+    .card-footer {
+      border-top: 1px solid var(--border-color);
       padding-top: 0.5rem;
       margin-top: auto;
       display: flex;
@@ -57,36 +54,24 @@ export class CustomCard extends LitElement {
     }
 
     input[type='checkbox'] {
-      width: 16px;
-      height: 16px;
+      width: 1rem;
+      height: 1rem;
       cursor: pointer;
+      margin: 0;
     }
   `;
 
-  renderCell(item, column) {
-    if (column.template) {
-      return html`${column.template(item)}`;
-    }
-    return html`${item[column.field] || ''}`;
-  }
-
-  renderComponent(item, column) {
-    if (column.component) {
-      return column.component(item);
-    }
+  renderContent(item, column) {
+    return column.template ? column.template(item) : item[column.field] || '';
   }
 
   handleSelect(e) {
     this.dispatchEvent(
       new CustomEvent('card-select', {
-        detail: {
-          item: this.item,
-          selected: e.target.checked,
-        },
+        detail: {item: this.item, selected: e.target.checked},
       })
     );
   }
-
   render() {
     return html`
       <div class="card">
@@ -94,36 +79,30 @@ export class CustomCard extends LitElement {
           ${this.columns.map(
             (column) => html`
               ${column.template || column.field
-                ? html`<span class="card-label">${column.header}:</span>`
+                ? html`
+                    <span class="card-label">${column.header}:</span>
+                    <span class="card-value">
+                      ${this.renderContent(this.item, column)}
+                    </span>
+                  `
                 : ''}
-              <span class="card-value"
-                >${this.renderCell(this.item, column)}</span
-              >
             `
           )}
         </div>
 
-        <div class="card-bottom-section">
+        <div class="card-footer">
           ${this.hasSelection
             ? html`
-                <div>
-                  <input
-                    type="checkbox"
-                    .checked=${this.selected}
-                    @change=${this.handleSelect}
-                  />
-                </div>
+                <input
+                  type="checkbox"
+                  .checked=${this.selected}
+                  @change=${this.handleSelect}
+                />
               `
             : ''}
-          ${this.columns.find((col) => col.component)
-            ? html`
-                <div>
-                  ${this.columns
-                    .filter((col) => col.component)
-                    .map((col) => this.renderComponent(this.item, col))}
-                </div>
-              `
-            : ''}
+          ${this.columns
+            .filter((col) => col.component)
+            .map((col) => col.component(this.item))}
         </div>
       </div>
     `;
