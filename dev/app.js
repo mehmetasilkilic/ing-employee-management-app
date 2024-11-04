@@ -1,10 +1,11 @@
 import {LitElement, html, css} from 'lit';
+import {i18nMixin} from './localization/i18n.js';
 
 import {router, routes} from './config/router.js';
 
 import './components/nav-bar/index.js';
 
-export class AppRoot extends LitElement {
+export class AppRoot extends i18nMixin(LitElement) {
   static styles = css`
     :host {
       display: block;
@@ -28,7 +29,8 @@ export class AppRoot extends LitElement {
   }
 
   handleLanguageChange(e) {
-    console.log('Language changed to:', e.detail.language);
+    const newLang = e.detail.language;
+    this.i18n.changeLanguage(newLang);
   }
 
   render() {
