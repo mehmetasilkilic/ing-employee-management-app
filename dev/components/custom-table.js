@@ -145,37 +145,34 @@ export class CustomTable extends LitElement {
     }
   }
 
-  handleSelectAll(e) {
+  handleSelection(isSelectAll, item, isChecked) {
     if (!this.hasSelection) return;
 
-    const isChecked = e.target.checked;
-    const newSelectedItems = isChecked ? [...this.data] : [];
-    this.selectedItems = newSelectedItems;
-    this.dispatchEvent(
-      new CustomEvent('selection-change', {
-        detail: {selectedItems: this.selectedItems},
-      })
-    );
-  }
-
-  handleSelectItem(item, e) {
-    if (!this.hasSelection) return;
-
-    const isChecked = e.target.checked;
     let newSelectedItems;
 
-    if (isChecked) {
-      newSelectedItems = [...this.selectedItems, item];
+    if (isSelectAll) {
+      // Handle "Select All" case
+      newSelectedItems = isChecked ? [...this.data] : [];
     } else {
-      newSelectedItems = this.selectedItems.filter(
-        (selectedItem) => selectedItem.id !== item.id
-      );
+      // Handle individual item selection
+      if (isChecked) {
+        newSelectedItems = [...this.selectedItems, item];
+      } else {
+        newSelectedItems = this.selectedItems.filter(
+          (selectedItem) => selectedItem.id !== item.id
+        );
+      }
     }
 
     this.selectedItems = newSelectedItems;
     this.dispatchEvent(
       new CustomEvent('selection-change', {
-        detail: {selectedItems: this.selectedItems},
+        detail: {
+          selectedItems: this.selectedItems,
+          isSelectAll,
+          item,
+          isChecked,
+        },
       })
     );
   }
@@ -258,7 +255,11 @@ export class CustomTable extends LitElement {
                                   type="checkbox"
                                   .checked=${this.isItemSelected(item)}
                                   @change=${(e) =>
-                                    this.handleSelectItem(item, e)}
+                                    this.handleSelection(
+                                      false,
+                                      item,
+                                      e.target.checked
+                                    )}
                                 />
                               </td>
                             `
