@@ -1,12 +1,12 @@
 export const getDepartmentOptions = (t) => [
-  {value: 1, label: t('forms.departments.analytics')},
-  {value: 2, label: t('forms.departments.tech')},
+  {value: '1', label: t('forms.departments.analytics')},
+  {value: '2', label: t('forms.departments.tech')},
 ];
 
 export const getPositionOptions = (t) => [
-  {value: 1, label: t('forms.positions.junior')},
-  {value: 2, label: t('forms.positions.medior')},
-  {value: 3, label: t('forms.positions.senior')},
+  {value: '1', label: t('forms.positions.junior')},
+  {value: '2', label: t('forms.positions.medior')},
+  {value: '3', label: t('forms.positions.senior')},
 ];
 
 export const getEmployeeFormFields = (t) => [

@@ -6,12 +6,19 @@ export default {
     },
     employees: {
       title: 'Personel Listesi',
+      deleteConfirmation: 'Personeli silmek istediğinize emin misiniz?',
+      deleteError:
+        'Personeli silerken bir hata oluştu. Lütfen tekrar deneyiniz.',
     },
     addEmployee: {
       title: 'Yeni Personel Ekle',
     },
     editEmployee: {
       title: 'Personeli Düzenle',
+      saveConfirmation:
+        'Personel bilgilerindeki değişiklikleri kaydetmek istediğinizden emin misiniz?',
+      saveError:
+        'Personel bilgileri kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.',
     },
     forms: {
       addEditEmployee: {

@@ -6,12 +6,17 @@ export default {
     },
     employees: {
       title: 'Employee List',
+      deleteConfirmation: 'Are you sure you want to delete the employee?',
+      deleteError: 'Error deleting employee. Please try again.',
     },
     addEmployee: {
       title: 'Add New Employee',
     },
     editEmployee: {
       title: 'Edit Employee',
+      saveConfirmation:
+        'Are you sure you want to save changes for the employee?',
+      saveError: 'Error saving employee changes. Please try again.',
     },
     forms: {
       departments: {

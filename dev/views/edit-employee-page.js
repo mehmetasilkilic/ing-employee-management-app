@@ -114,24 +114,34 @@ export class EditEmployeePage extends i18nMixin(LitElement) {
   }
 
   async handleFormSubmit(e) {
-    try {
-      const formData = e.detail;
+    // Show confirmation dialog
+    const confirmSave = confirm(
+      this.t('editEmployee.saveConfirmation', {
+        name: `${this.employeeData.firstName} ${this.employeeData.lastName}`,
+      })
+    );
 
-      // Convert string values to numbers
-      const updatedEmployeeData = {
-        ...formData,
-        department: String(formData.department),
-        position: String(formData.position),
-      };
+    if (confirmSave) {
+      try {
+        const formData = e.detail;
 
-      await employeeService.updateEmployee(
-        this.employeeData.id,
-        updatedEmployeeData
-      );
-      sessionStorage.removeItem('editEmployee');
-      Router.go('/');
-    } catch (error) {
-      console.error('Error updating employee:', error);
+        // Convert string values to numbers
+        const updatedEmployeeData = {
+          ...formData,
+          department: String(formData.department),
+          position: String(formData.position),
+        };
+
+        await employeeService.updateEmployee(
+          this.employeeData.id,
+          updatedEmployeeData
+        );
+        sessionStorage.removeItem('editEmployee');
+        Router.go('/');
+      } catch (error) {
+        console.error('Error updating employee:', error);
+        alert(this.t('editEmployee.saveError'));
+      }
     }
   }
 

@@ -106,11 +106,26 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   async handleDelete(employee) {
-    try {
-      await employeeService.deleteEmployee(employee.id);
-      await this.fetchEmployees();
-    } catch (error) {
-      console.error('Error deleting employee:', error);
+    const confirmDelete = confirm(
+      this.t('employees.deleteConfirmation', {
+        name: `${employee.firstName} ${employee.lastName}`,
+      })
+    );
+
+    if (confirmDelete) {
+      try {
+        await employeeService.deleteEmployee(employee.id);
+        // If we're on a page with only one item and it's not the first page,
+        // go to the previous page after deletion
+        if (this.employees.length === 1 && this.currentPage > 1) {
+          await this.fetchEmployees(this.currentPage - 1);
+        } else {
+          await this.fetchEmployees(this.currentPage);
+        }
+      } catch (error) {
+        console.error('Error deleting employee:', error);
+        alert(this.t('employees.deleteError'));
+      }
     }
   }
 
