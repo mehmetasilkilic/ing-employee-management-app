@@ -5,6 +5,7 @@ import {employeeSchema} from '../config/forms/add-edit-employee/validation.js';
 import {employeeFormFields} from '../config/forms/add-edit-employee/fields.js';
 
 import '../components/form-builder.js';
+import '../components/custom-icon.js';
 
 export class EditEmployeePage extends LitElement {
   static properties = {
@@ -24,8 +25,6 @@ export class EditEmployeePage extends LitElement {
     .form-container {
       background: white;
       padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .title {
@@ -44,19 +43,16 @@ export class EditEmployeePage extends LitElement {
     .go-back {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: var(--primary-color);
-      color: white;
+      background: none;
+      color: var(--primary-color);
       border: none;
-      border-radius: 4px;
-      padding: 0.5rem 1rem;
       cursor: pointer;
       transition: background-color 0.2s, transform 0.1s;
       font-weight: 500;
     }
 
     .go-back:hover {
-      background-color: var(--hover-primary);
+      color: var(--hover-primary);
       transform: translateY(-1px);
     }
 
@@ -148,7 +144,10 @@ export class EditEmployeePage extends LitElement {
       <div class="page-container">
         <div class="top-section">
           <h2 class="title">Edit Employee</h2>
-          <button class="go-back" @click=${this.handleGoBack}>← Go Back</button>
+          <button class="go-back" @click=${this.handleGoBack}>
+            <custom-icon icon="arrow_back_ios" size="14px"></custom-icon>
+            Go Back
+          </button>
         </div>
         ${this.renderContent()}
       </div>
