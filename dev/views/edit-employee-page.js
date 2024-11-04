@@ -125,17 +125,7 @@ export class EditEmployeePage extends i18nMixin(LitElement) {
       try {
         const formData = e.detail;
 
-        // Convert string values to numbers
-        const updatedEmployeeData = {
-          ...formData,
-          department: String(formData.department),
-          position: String(formData.position),
-        };
-
-        await employeeService.updateEmployee(
-          this.employeeData.id,
-          updatedEmployeeData
-        );
+        await employeeService.updateEmployee(this.employeeData.id, formData);
         sessionStorage.removeItem('editEmployee');
         Router.go('/');
       } catch (error) {

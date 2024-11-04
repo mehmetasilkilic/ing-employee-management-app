@@ -65,23 +65,13 @@ export class AddEmployeePage extends i18nMixin(LitElement) {
       this.loading = true;
       const formData = e.detail;
 
-      // Convert string values to numbers where needed
-      const employeeData = {
-        ...formData,
-        department: Number(formData.department),
-        position: Number(formData.position),
-      };
+      await employeeService.addEmployee(formData);
 
-      await employeeService.addEmployee(employeeData);
-
-      // Show success message (you can implement your own notification system)
       alert(this.t('addEmployee.successMessage'));
 
-      // Navigate back to employees list
       Router.go('/');
     } catch (error) {
       console.error('Error adding employee:', error);
-      // Show error message
       alert(this.t('addEmployee.errorMessage'));
     } finally {
       this.loading = false;
