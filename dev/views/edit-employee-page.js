@@ -57,7 +57,7 @@ export class EditEmployeePage extends LitElement {
     }
 
     .go-back:hover {
-      background-color: var(--primary-color-dark, #0056b3);
+      background-color: var(--hover-primary);
       transform: translateY(-1px);
     }
 
