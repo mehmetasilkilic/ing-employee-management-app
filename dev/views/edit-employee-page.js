@@ -26,25 +26,17 @@ export class EditEmployeePage extends LitElement {
       padding: 2rem;
     }
 
-    /* 
-    .actions {
+    .title {
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .top-section {
       display: flex;
-      justify-content: flex-end;
-      gap: 1rem;
-      margin-top: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
     }
-
-    button {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .cancel {
-      background-color: #6c757d;
-      color: white;
-    } */
   `;
 
   constructor() {

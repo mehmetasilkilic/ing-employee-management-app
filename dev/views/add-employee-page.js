@@ -19,6 +19,18 @@ export class AddEmployeePage extends LitElement {
       background: white;
       padding: 2rem;
     }
+
+    .title {
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .top-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+    }
   `;
 
   handleFormSubmit(e) {
@@ -29,7 +41,9 @@ export class AddEmployeePage extends LitElement {
   render() {
     return html`
       <div class="page-container">
-        <h1>Add New Employee</h1>
+        <div class="top-section">
+          <h2 class="title">Edit New Employee</h2>
+        </div>
 
         <div class="form-container">
           <form-builder
