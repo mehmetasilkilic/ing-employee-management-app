@@ -29,7 +29,6 @@ export class LanguageSelector extends LitElement {
     }
 
     .language-button {
-      padding: 0.25rem;
       background: transparent;
       border: none;
       cursor: pointer;
@@ -43,8 +42,8 @@ export class LanguageSelector extends LitElement {
     }
 
     .flag-icon {
-      width: 30px;
-      height: 20px;
+      width: 20px;
+      height: 13px;
       object-fit: cover;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
