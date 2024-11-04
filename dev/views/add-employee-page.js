@@ -42,7 +42,7 @@ export class AddEmployeePage extends LitElement {
     return html`
       <div class="page-container">
         <div class="top-section">
-          <h2 class="title">Edit New Employee</h2>
+          <h2 class="title">Add New Employee</h2>
         </div>
 
         <div class="form-container">
