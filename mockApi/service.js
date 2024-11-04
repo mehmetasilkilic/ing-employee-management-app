@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import {mockData} from './mockData.js';
 
 class EmployeeService {
@@ -7,7 +6,6 @@ class EmployeeService {
   }
 
   initializeData() {
-    // Always check localStorage first
     const storedData = localStorage.getItem('employees');
     if (storedData) {
       this.employees = JSON.parse(storedData);
@@ -19,32 +17,44 @@ class EmployeeService {
 
   saveToStorage() {
     localStorage.setItem('employees', JSON.stringify(this.employees));
-    // Update the mock data for persistence
     mockData.length = 0;
     mockData.push(...this.employees);
   }
 
-  // Method to force refresh data from storage
   refreshData() {
     this.initializeData();
   }
 
-  // Get paginated employees with optional filters
+  searchInField(value, searchTerm) {
+    return value?.toString().toLowerCase().includes(searchTerm.toLowerCase());
+  }
+
   async getEmployees({
     page = 1,
     pageSize = 12,
     department = null,
     position = null,
+    searchTerm = '',
     forceRefresh = false,
   } = {}) {
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Refresh data if requested
         if (forceRefresh) {
           this.refreshData();
         }
 
         let filteredEmployees = [...this.employees];
+
+        if (searchTerm) {
+          filteredEmployees = filteredEmployees.filter((emp) => {
+            return (
+              this.searchInField(emp.firstName, searchTerm) ||
+              this.searchInField(emp.lastName, searchTerm) ||
+              this.searchInField(emp.email, searchTerm) ||
+              this.searchInField(emp.phone, searchTerm)
+            );
+          });
+        }
 
         if (department !== null) {
           filteredEmployees = filteredEmployees.filter(

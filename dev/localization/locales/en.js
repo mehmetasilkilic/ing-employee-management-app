@@ -17,6 +17,7 @@ export default {
       deleteConfirmation: 'Are you sure you want to delete the employee?',
       deleteError: 'Error deleting employee. Please try again.',
       deleteSuccess: 'Employee deleted successfully.',
+      search: "Search..."
     },
     addEmployee: {
       title: 'Add New Employee',

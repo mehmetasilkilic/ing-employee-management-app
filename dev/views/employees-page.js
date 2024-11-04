@@ -20,6 +20,8 @@ export class EmployeesPage extends i18nMixin(LitElement) {
     currentPage: {type: Number, state: true},
     totalItems: {type: Number, state: true},
     pageSize: {type: Number},
+    searchTerm: {type: String, state: true},
+    _searchInputValue: {type: String, state: true},
   };
 
   static styles = css`
@@ -37,10 +39,39 @@ export class EmployeesPage extends i18nMixin(LitElement) {
     }
 
     .top-section {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
+      gap: 2rem;
       padding: 1rem 2rem;
+    }
+
+    .controls-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .search-container {
+      position: relative;
+      width: 280px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--disabled-primary);
+      cursor: pointer;
     }
 
     .view-toggle {
@@ -69,6 +100,29 @@ export class EmployeesPage extends i18nMixin(LitElement) {
       .table-container {
         padding: 0 1rem;
       }
+
+      .top-section {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .controls-section {
+        order: 2;
+      }
+
+      .title {
+        order: 1;
+      }
+
+      .view-toggle {
+        order: 3;
+        justify-content: center;
+      }
+
+      .search-container {
+        width: 100%;
+      }
     }
   `;
 
@@ -81,8 +135,9 @@ export class EmployeesPage extends i18nMixin(LitElement) {
     this.currentPage = 1;
     this.totalItems = 0;
     this.pageSize = 12;
+    this.searchTerm = '';
+    this._searchInputValue = '';
 
-    // Listen for storage events to handle updates from other tabs
     window.addEventListener('storage', (e) => {
       if (e.key === 'employees') {
         this.fetchEmployees(this.currentPage, true);
@@ -112,6 +167,7 @@ export class EmployeesPage extends i18nMixin(LitElement) {
       const result = await employeeService.getEmployees({
         page,
         pageSize: this.pageSize,
+        searchTerm: this.searchTerm,
         forceRefresh,
       });
 
@@ -157,7 +213,6 @@ export class EmployeesPage extends i18nMixin(LitElement) {
       if (confirmed) {
         await employeeService.deleteEmployee(employee.id);
 
-        // Show success confirmation
         await confirmationStore.getState().show({
           title: this.t('common.success'),
           message: this.t('employees.deleteSuccess', {
@@ -167,7 +222,6 @@ export class EmployeesPage extends i18nMixin(LitElement) {
           cancelLabel: null,
         });
 
-        // Handle pagination
         if (this.employees.length === 1 && this.currentPage > 1) {
           await this.fetchEmployees(this.currentPage - 1, true);
         } else {
@@ -207,6 +261,21 @@ export class EmployeesPage extends i18nMixin(LitElement) {
 
   handleSelectionChange(e) {
     this.selectedEmployees = e.detail.selectedItems;
+  }
+
+  handleSearchInput(e) {
+    this._searchInputValue = e.target.value;
+  }
+
+  async handleSearchSubmit(e) {
+    if (e.type === 'click' || (e.type === 'keydown' && e.key === 'Enter')) {
+      e.preventDefault();
+      if (this.loading) return;
+
+      this.searchTerm = this._searchInputValue;
+      this.currentPage = 1;
+      await this.fetchEmployees(1, false);
+    }
   }
 
   setViewMode(mode) {
@@ -265,6 +334,28 @@ export class EmployeesPage extends i18nMixin(LitElement) {
       <div class="container">
         <div class="top-section">
           <h2 class="title">${this.t('employees.title')}</h2>
+
+          <div class="controls-section">
+            <div class="search-container">
+              <input
+                type="text"
+                class="search-input"
+                placeholder="${this.t('employees.search')}"
+                .value=${this._searchInputValue}
+                @input=${this.handleSearchInput}
+                @keydown=${this.handleSearchSubmit}
+                ?disabled=${this.loading}
+              />
+
+              <custom-icon
+                class="search-icon"
+                icon="search"
+                size="20px"
+                @click=${this.handleSearchSubmit}
+              ></custom-icon>
+            </div>
+          </div>
+
           <div class="view-toggle">
             <button
               class=${this.viewMode === 'table' ? 'active' : ''}
@@ -273,6 +364,7 @@ export class EmployeesPage extends i18nMixin(LitElement) {
             >
               <custom-icon icon="reorder" size="36px"></custom-icon>
             </button>
+
             <button
               class=${this.viewMode === 'list' ? 'active' : ''}
               @click=${() => this.setViewMode('list')}

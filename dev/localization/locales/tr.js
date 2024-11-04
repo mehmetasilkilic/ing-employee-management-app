@@ -18,6 +18,7 @@ export default {
       deleteError:
         'Personeli silerken bir hata oluştu. Lütfen tekrar deneyiniz.',
       deleteSuccess: 'Personel başarıyla silindi.',
+      search: 'Arama...',
     },
     addEmployee: {
       title: 'Yeni Personel Ekle',
