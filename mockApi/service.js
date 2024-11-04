@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
-
-import {mockData} from './mockData';
+import {mockData} from './mockData.js';
 
 class EmployeeService {
   constructor() {
@@ -14,6 +13,9 @@ class EmployeeService {
 
   saveToStorage() {
     localStorage.setItem('employees', JSON.stringify(this.employees));
+    // Also update the mock data for persistence across page refreshes
+    mockData.length = 0; // Clear existing data
+    mockData.push(...this.employees); // Update with current data
   }
 
   // Get paginated employees with optional filters
@@ -70,11 +72,13 @@ class EmployeeService {
       setTimeout(() => {
         const newEmployee = {
           ...employeeData,
-          id: new Date().getTime(), // Using timestamp as unique ID
+          id: new Date().getTime(),
         };
 
-        this.employees.push(newEmployee);
+        // Add to the beginning of the array
+        this.employees.unshift(newEmployee);
         this.saveToStorage();
+
         resolve(newEmployee);
       }, 300);
     });

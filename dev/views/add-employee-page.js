@@ -1,6 +1,8 @@
 import {LitElement, html, css} from 'lit';
+import {Router} from '@vaadin/router';
 
 import {i18nMixin} from '../localization/i18n.js';
+import employeeService from '../../mockApi/service.js';
 
 import {createEmployeeSchema} from '../config/forms/add-edit-employee/validation.js';
 import {getEmployeeFormFields} from '../config/forms/add-edit-employee/fields.js';
@@ -8,6 +10,10 @@ import {getEmployeeFormFields} from '../config/forms/add-edit-employee/fields.js
 import '../components/form-builder.js';
 
 export class AddEmployeePage extends i18nMixin(LitElement) {
+  static properties = {
+    loading: {type: Boolean},
+  };
+
   static styles = css`
     :host {
       display: block;
@@ -20,6 +26,7 @@ export class AddEmployeePage extends i18nMixin(LitElement) {
     .form-container {
       background: white;
       padding: 2rem;
+      position: relative;
     }
 
     .title {
@@ -33,11 +40,52 @@ export class AddEmployeePage extends i18nMixin(LitElement) {
       align-items: center;
       padding: 1rem 2rem;
     }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
   `;
 
-  handleFormSubmit(e) {
-    console.log('Form submitted:', e.detail);
-    // Handle the form submission
+  constructor() {
+    super();
+    this.loading = false;
+  }
+
+  async handleFormSubmit(e) {
+    try {
+      this.loading = true;
+      const formData = e.detail;
+
+      // Convert string values to numbers where needed
+      const employeeData = {
+        ...formData,
+        department: Number(formData.department),
+        position: Number(formData.position),
+      };
+
+      await employeeService.addEmployee(employeeData);
+
+      // Show success message (you can implement your own notification system)
+      alert(this.t('addEmployee.successMessage'));
+
+      // Navigate back to employees list
+      Router.go('/');
+    } catch (error) {
+      console.error('Error adding employee:', error);
+      // Show error message
+      alert(this.t('addEmployee.errorMessage'));
+    } finally {
+      this.loading = false;
+    }
   }
 
   render() {
@@ -50,9 +98,16 @@ export class AddEmployeePage extends i18nMixin(LitElement) {
         </div>
 
         <div class="form-container">
+          ${this.loading
+            ? html`
+                <div class="loading-overlay">${this.t('common.loading')}</div>
+              `
+            : ''}
+
           <form-builder
             .schema=${createEmployeeSchema()}
             .formFields=${formFields}
+            .disabled=${this.loading}
             @form-submit=${this.handleFormSubmit}
           ></form-builder>
         </div>

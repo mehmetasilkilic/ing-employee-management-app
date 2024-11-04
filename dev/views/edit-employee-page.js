@@ -3,6 +3,8 @@ import {Router} from '@vaadin/router';
 
 import {i18nMixin} from '../localization/i18n.js';
 
+import employeeService from '../../mockApi/service.js';
+
 import {createEmployeeSchema} from '../config/forms/add-edit-employee/validation.js';
 import {getEmployeeFormFields} from '../config/forms/add-edit-employee/fields.js';
 
@@ -111,9 +113,26 @@ export class EditEmployeePage extends i18nMixin(LitElement) {
     }
   }
 
-  handleFormSubmit(e) {
-    console.log('Updated employee data:', e.detail);
-    Router.go('/');
+  async handleFormSubmit(e) {
+    try {
+      const formData = e.detail;
+
+      // Convert string values to numbers
+      const updatedEmployeeData = {
+        ...formData,
+        department: String(formData.department),
+        position: String(formData.position),
+      };
+
+      await employeeService.updateEmployee(
+        this.employeeData.id,
+        updatedEmployeeData
+      );
+      sessionStorage.removeItem('editEmployee');
+      Router.go('/');
+    } catch (error) {
+      console.error('Error updating employee:', error);
+    }
   }
 
   handleGoBack() {
