@@ -22,4 +22,13 @@ export default {
       },
     }),
   ],
+
+  middleware: [
+    function rewriteIndex(context, next) {
+      if (!context.url.includes('.') && context.url !== '/') {
+        context.url = '/index.html';
+      }
+      return next();
+    },
+  ],
 };
