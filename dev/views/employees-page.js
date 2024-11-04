@@ -2,7 +2,6 @@ import {LitElement, html, css} from 'lit';
 import {Router} from '@vaadin/router';
 
 import {i18nMixin} from '../localization/i18n.js';
-
 import employeeService from '../../mockApi/service.js';
 
 import '../components/custom-table.js';
@@ -12,12 +11,12 @@ import '../components/action-buttons.js';
 
 export class EmployeesPage extends i18nMixin(LitElement) {
   static properties = {
-    employees: {type: Array},
-    loading: {type: Boolean},
-    selectedEmployees: {type: Array},
-    viewMode: {type: String},
-    currentPage: {type: Number},
-    totalItems: {type: Number},
+    employees: {type: Array, state: true},
+    loading: {type: Boolean, state: true},
+    selectedEmployees: {type: Array, state: true},
+    viewMode: {type: String, state: true},
+    currentPage: {type: Number, state: true},
+    totalItems: {type: Number, state: true},
     pageSize: {type: Number},
   };
 
@@ -80,23 +79,60 @@ export class EmployeesPage extends i18nMixin(LitElement) {
     this.currentPage = 1;
     this.totalItems = 0;
     this.pageSize = 12;
-    this.fetchEmployees();
+
+    // Listen for storage events to handle updates from other tabs
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'employees') {
+        this.fetchEmployees(this.currentPage, true);
+      }
+    });
   }
 
-  async fetchEmployees(page = this.currentPage) {
+  connectedCallback() {
+    super.connectedCallback();
+    this.loadInitialData();
+  }
+
+  firstUpdated() {
+    this.addEventListener('error', (e) => {
+      console.error('Error in employees-page:', e.detail);
+    });
+  }
+
+  async loadInitialData() {
+    await this.fetchEmployees(this.currentPage, true);
+  }
+
+  async fetchEmployees(page = this.currentPage, forceRefresh = false) {
     this.loading = true;
+
     try {
       const result = await employeeService.getEmployees({
         page,
         pageSize: this.pageSize,
+        forceRefresh,
       });
-      this.employees = result.data;
-      this.totalItems = result.metadata.totalItems;
-      this.currentPage = result.metadata.currentPage;
+
+      if (this.isConnected) {
+        this.employees = result.data;
+        this.totalItems = result.metadata.totalItems;
+        this.currentPage = result.metadata.currentPage;
+      }
     } catch (error) {
       console.error('Error fetching employees:', error);
+      this.dispatchEvent(
+        new CustomEvent('error', {
+          detail: {
+            message: 'Failed to fetch employees',
+            error,
+          },
+        })
+      );
     } finally {
-      this.loading = false;
+      if (this.isConnected) {
+        this.loading = false;
+        this.requestUpdate();
+      }
     }
   }
 
@@ -115,12 +151,11 @@ export class EmployeesPage extends i18nMixin(LitElement) {
     if (confirmDelete) {
       try {
         await employeeService.deleteEmployee(employee.id);
-        // If we're on a page with only one item and it's not the first page,
-        // go to the previous page after deletion
+        // Force refresh data after deletion
         if (this.employees.length === 1 && this.currentPage > 1) {
-          await this.fetchEmployees(this.currentPage - 1);
+          await this.fetchEmployees(this.currentPage - 1, true);
         } else {
-          await this.fetchEmployees(this.currentPage);
+          await this.fetchEmployees(this.currentPage, true);
         }
       } catch (error) {
         console.error('Error deleting employee:', error);
@@ -130,9 +165,19 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   async handlePageChange(e) {
+    if (this.loading) return;
+
     const newPage = e.detail.page;
-    this.currentPage = newPage;
-    await this.fetchEmployees(newPage);
+    if (newPage === this.currentPage) return;
+
+    try {
+      this.currentPage = newPage;
+      await this.fetchEmployees(newPage, true);
+    } catch (error) {
+      console.error('Error changing page:', error);
+      this.currentPage = e.detail.previousPage;
+      this.requestUpdate();
+    }
   }
 
   handleSelectionChange(e) {
@@ -191,26 +236,35 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   render() {
-    if (this.loading) {
-      return html`<div>Loading...</div>`;
+    if (this.loading && !this.employees.length) {
+      return html`
+        <div class="container">
+          <div class="top-section">
+            <h2 class="title">${this.t('employees.title')}</h2>
+          </div>
+          <div class="table-container">
+            <div>Loading...</div>
+          </div>
+        </div>
+      `;
     }
 
     return html`
       <div class="container">
         <div class="top-section">
           <h2 class="title">${this.t('employees.title')}</h2>
-
           <div class="view-toggle">
             <button
               class=${this.viewMode === 'table' ? 'active' : ''}
               @click=${() => this.setViewMode('table')}
+              ?disabled=${this.loading}
             >
               <custom-icon icon="reorder" size="36px"></custom-icon>
             </button>
-
             <button
               class=${this.viewMode === 'list' ? 'active' : ''}
               @click=${() => this.setViewMode('list')}
+              ?disabled=${this.loading}
             >
               <custom-icon icon="apps" size="36px"></custom-icon>
             </button>
@@ -219,28 +273,34 @@ export class EmployeesPage extends i18nMixin(LitElement) {
 
         <div class="table-container">
           ${this.viewMode === 'table'
-            ? html` <custom-table
-                .columns=${this.tableColumns}
-                .data=${this.employees}
-                maxHeight=${'28rem'}
-                .pageSize=${this.pageSize}
-                .totalItems=${this.totalItems}
-                .currentPage=${this.currentPage}
-                .selectedItems=${this.selectedEmployees}
-                @page-change=${this.handlePageChange}
-                @selection-change=${this.handleSelectionChange}
-              ></custom-table>`
-            : html` <custom-list
-                .columns=${this.tableColumns}
-                .data=${this.employees}
-                maxHeight=${'29rem'}
-                .pageSize=${this.pageSize}
-                .totalItems=${this.totalItems}
-                .currentPage=${this.currentPage}
-                .selectedItems=${this.selectedEmployees}
-                @page-change=${this.handlePageChange}
-                @selection-change=${this.handleSelectionChange}
-              ></custom-list>`}
+            ? html`
+                <custom-table
+                  .columns=${this.tableColumns}
+                  .data=${this.employees}
+                  maxHeight=${'28rem'}
+                  .pageSize=${this.pageSize}
+                  .totalItems=${this.totalItems}
+                  .currentPage=${this.currentPage}
+                  .selectedItems=${this.selectedEmployees}
+                  ?disabled=${this.loading}
+                  @page-change=${this.handlePageChange}
+                  @selection-change=${this.handleSelectionChange}
+                ></custom-table>
+              `
+            : html`
+                <custom-list
+                  .columns=${this.tableColumns}
+                  .data=${this.employees}
+                  maxHeight=${'29rem'}
+                  .pageSize=${this.pageSize}
+                  .totalItems=${this.totalItems}
+                  .currentPage=${this.currentPage}
+                  .selectedItems=${this.selectedEmployees}
+                  ?disabled=${this.loading}
+                  @page-change=${this.handlePageChange}
+                  @selection-change=${this.handleSelectionChange}
+                ></custom-list>
+              `}
         </div>
       </div>
     `;

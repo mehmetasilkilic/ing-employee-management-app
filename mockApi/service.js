@@ -3,19 +3,30 @@ import {mockData} from './mockData.js';
 
 class EmployeeService {
   constructor() {
-    this.employees = JSON.parse(localStorage.getItem('employees')) || [];
-    // Initialize with mock data if empty
-    if (this.employees.length === 0) {
-      this.employees = mockData;
+    this.initializeData();
+  }
+
+  initializeData() {
+    // Always check localStorage first
+    const storedData = localStorage.getItem('employees');
+    if (storedData) {
+      this.employees = JSON.parse(storedData);
+    } else {
+      this.employees = [...mockData];
       this.saveToStorage();
     }
   }
 
   saveToStorage() {
     localStorage.setItem('employees', JSON.stringify(this.employees));
-    // Also update the mock data for persistence across page refreshes
-    mockData.length = 0; // Clear existing data
-    mockData.push(...this.employees); // Update with current data
+    // Update the mock data for persistence
+    mockData.length = 0;
+    mockData.push(...this.employees);
+  }
+
+  // Method to force refresh data from storage
+  refreshData() {
+    this.initializeData();
   }
 
   // Get paginated employees with optional filters
@@ -24,26 +35,29 @@ class EmployeeService {
     pageSize = 12,
     department = null,
     position = null,
+    forceRefresh = false,
   } = {}) {
     return new Promise((resolve) => {
       setTimeout(() => {
+        // Refresh data if requested
+        if (forceRefresh) {
+          this.refreshData();
+        }
+
         let filteredEmployees = [...this.employees];
 
-        // Apply department filter
         if (department !== null) {
           filteredEmployees = filteredEmployees.filter(
             (emp) => emp.department === department
           );
         }
 
-        // Apply position filter
         if (position !== null) {
           filteredEmployees = filteredEmployees.filter(
             (emp) => emp.position === position
           );
         }
 
-        // Calculate pagination
         const totalItems = filteredEmployees.length;
         const totalPages = Math.ceil(totalItems / pageSize);
         const startIndex = (page - 1) * pageSize;
@@ -66,7 +80,6 @@ class EmployeeService {
     });
   }
 
-  // Add new employee
   async addEmployee(employeeData) {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -74,17 +87,13 @@ class EmployeeService {
           ...employeeData,
           id: new Date().getTime(),
         };
-
-        // Add to the beginning of the array
         this.employees.unshift(newEmployee);
         this.saveToStorage();
-
         resolve(newEmployee);
       }, 300);
     });
   }
 
-  // Update existing employee
   async updateEmployee(id, employeeData) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -93,7 +102,7 @@ class EmployeeService {
           const updatedEmployee = {
             ...this.employees[index],
             ...employeeData,
-            id, // Ensure ID doesn't change
+            id,
           };
           this.employees[index] = updatedEmployee;
           this.saveToStorage();
@@ -105,7 +114,6 @@ class EmployeeService {
     });
   }
 
-  // Delete employee
   async deleteEmployee(id) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -122,6 +130,5 @@ class EmployeeService {
   }
 }
 
-// Create a singleton instance
 const employeeService = new EmployeeService();
 export default employeeService;
