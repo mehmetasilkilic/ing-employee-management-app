@@ -24,11 +24,14 @@ export class EditEmployeePage extends LitElement {
     .form-container {
       background: white;
       padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .title {
       color: var(--primary-color);
       margin: 0;
+      font-size: 1.5rem;
     }
 
     .top-section {
@@ -36,6 +39,43 @@ export class EditEmployeePage extends LitElement {
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .go-back {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      font-weight: 500;
+    }
+
+    .go-back:hover {
+      background-color: var(--primary-color-dark, #0056b3);
+      transform: translateY(-1px);
+    }
+
+    .go-back:active {
+      transform: translateY(0);
+    }
+
+    .empty-state {
+      background: white;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-state h3 {
+      color: #666;
+      margin-bottom: 1rem;
     }
   `;
 
@@ -76,35 +116,42 @@ export class EditEmployeePage extends LitElement {
 
   handleFormSubmit(e) {
     console.log('Updated employee data:', e.detail);
-
-    Router.go('/employees');
+    Router.go('/');
   }
 
-  handleCancel() {
-    Router.go('/employees');
+  handleGoBack() {
+    Router.go('/');
   }
 
-  render() {
+  renderContent() {
     if (!this.employeeData) {
-      return html`<div>No employee data available</div>`;
+      return html`
+        <div class="empty-state">
+          <h3>No employee data available</h3>
+        </div>
+      `;
     }
 
     return html`
+      <div class="form-container">
+        <form-builder
+          .schema=${employeeSchema}
+          .formFields=${employeeFormFields}
+          .initialData=${this.employeeData}
+          @form-submit=${this.handleFormSubmit}
+        ></form-builder>
+      </div>
+    `;
+  }
+
+  render() {
+    return html`
       <div class="page-container">
-        <h1>Edit Employee</h1>
-
-        <div class="form-container">
-          <form-builder
-            .schema=${employeeSchema}
-            .formFields=${employeeFormFields}
-            .initialData=${this.employeeData}
-            @form-submit=${this.handleFormSubmit}
-          ></form-builder>
-
-          <!-- <div class="actions">
-            <button class="cancel" @click=${this.handleCancel}>Cancel</button>
-          </div> -->
+        <div class="top-section">
+          <h2 class="title">Edit Employee</h2>
+          <button class="go-back" @click=${this.handleGoBack}>← Go Back</button>
         </div>
+        ${this.renderContent()}
       </div>
     `;
   }
