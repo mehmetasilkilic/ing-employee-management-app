@@ -39,7 +39,6 @@ export class EditEmployeePage extends LitElement {
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
-      margin-bottom: 1rem;
     }
 
     .go-back {
