@@ -75,6 +75,11 @@ export class NavBar extends LitElement {
     }
 
     @media (max-width: 768px) {
+      :host {
+        margin: 0;
+        padding: 0.5rem 0;
+      }
+
       .hamburger {
         display: flex;
       }

@@ -60,6 +60,12 @@ export class EmployeesPage extends LitElement {
     .view-toggle button:hover:not(.active) {
       color: var(--hover-primary);
     }
+
+    @media (max-width: 768px) {
+      .table-container {
+        padding: 0 1rem;
+      }
+    }
   `;
 
   constructor() {

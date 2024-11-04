@@ -13,6 +13,12 @@ export class AppRoot extends LitElement {
     #outlet {
       margin: 0 1.5rem;
     }
+
+    @media (max-width: 768px) {
+      #outlet {
+        margin: 0;
+      }
+    }
   `;
 
   firstUpdated() {
