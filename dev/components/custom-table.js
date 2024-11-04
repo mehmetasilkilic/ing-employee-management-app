@@ -210,9 +210,9 @@ export class CustomTable extends LitElement {
   render() {
     return html`
       <div class="table-container">
-        <div class="header-container">
+        <div class="table-scroll-container">
           <table class="data-table">
-            <thead>
+            <thead class="header-container">
               <tr>
                 ${this.hasSelection
                   ? html`
@@ -233,10 +233,7 @@ export class CustomTable extends LitElement {
                 )}
               </tr>
             </thead>
-          </table>
-        </div>
-        <div class="table-scroll-container">
-          <table class="data-table">
+
             <tbody>
               ${!this.data.length
                 ? html`
