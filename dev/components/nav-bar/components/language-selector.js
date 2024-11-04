@@ -1,5 +1,7 @@
 import {LitElement, html, css} from 'lit';
 
+import i18next from 'i18next';
+
 export class LanguageSelector extends LitElement {
   static properties = {
     currentLanguage: {type: String},
@@ -8,19 +10,20 @@ export class LanguageSelector extends LitElement {
 
   constructor() {
     super();
-    this.currentLanguage = 'EN';
+    this.currentLanguage = i18next.language;
     this.languages = [
       {
-        code: 'EN',
+        code: 'en',
         name: 'English',
         flag: '../../../../assets/images/uk-flag.png',
       },
       {
-        code: 'TR',
+        code: 'tr',
         name: 'Türkçe',
         flag: '../../../../assets/images/turkish-flag.png',
       },
     ];
+    this._handleDocumentClick = this._handleDocumentClick.bind(this);
   }
 
   static styles = css`
@@ -106,40 +109,65 @@ export class LanguageSelector extends LitElement {
     e.stopPropagation();
   }
 
-  selectLanguage(lang) {
-    this.currentLanguage = lang;
-    const options = this.shadowRoot.querySelector('.language-options');
-    options.classList.remove('show');
-    this.dispatchEvent(
-      new CustomEvent('language-change', {
-        detail: {language: lang},
-        bubbles: true,
-        composed: true,
-      })
-    );
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    document.addEventListener('click', () => {
+  _handleDocumentClick(event) {
+    if (!this.contains(event.target)) {
       const options = this.shadowRoot?.querySelector('.language-options');
       if (options) {
         options.classList.remove('show');
       }
+    }
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener('click', this._handleDocumentClick);
+
+    // Listen for language updates from other components
+    window.addEventListener('language-updated', (e) => {
+      this.currentLanguage = e.detail.language;
     });
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener('click', this._handleDocumentClick);
+    window.removeEventListener('language-updated', this._handleLanguageUpdated);
+  }
+
+  async selectLanguage(lang) {
+    if (lang === this.currentLanguage) return;
+
+    try {
+      this.dispatchEvent(
+        new CustomEvent('language-change', {
+          detail: {language: lang},
+          bubbles: true,
+          composed: true,
+        })
+      );
+
+      const options = this.shadowRoot.querySelector('.language-options');
+      options.classList.remove('show');
+    } catch (error) {
+      console.error('Failed to change language:', error);
+    }
+  }
+
   getCurrentLanguage() {
-    return this.languages.find((lang) => lang.code === this.currentLanguage);
+    return (
+      this.languages.find((lang) => lang.code === this.currentLanguage) ||
+      this.languages[0]
+    );
   }
 
   render() {
+    const currentLang = this.getCurrentLanguage();
+
     return html`
-      <div class="language-selector" @click="${this.toggleLanguageOptions}">
-        <button class="language-button">
+      <div class="language-selector">
+        <button class="language-button" @click="${this.toggleLanguageOptions}">
           <img
-            src="${this.getCurrentLanguage().flag}"
-            alt="${this.getCurrentLanguage().code} flag"
+            src="${currentLang.flag}"
+            alt="${currentLang.code} flag"
             class="flag-icon"
           />
         </button>
@@ -156,7 +184,6 @@ export class LanguageSelector extends LitElement {
                   alt="${lang.code} flag"
                   class="option-flag"
                 />
-
                 <span class="language-name">${lang.name}</span>
               </div>
             `

@@ -1,59 +1,59 @@
-export const departmentOptions = [
-  {value: 1, label: 'Analytics'},
-  {value: 2, label: 'Tech'},
+export const getDepartmentOptions = (t) => [
+  {value: 1, label: t('forms.departments.analytics')},
+  {value: 2, label: t('forms.departments.tech')},
 ];
 
-export const positionOptions = [
-  {value: 1, label: 'Junior'},
-  {value: 2, label: 'Medior'},
-  {value: 3, label: 'Senior'},
+export const getPositionOptions = (t) => [
+  {value: 1, label: t('forms.positions.junior')},
+  {value: 2, label: t('forms.positions.medior')},
+  {value: 3, label: t('forms.positions.senior')},
 ];
 
-export const employeeFormFields = [
+export const getEmployeeFormFields = (t) => [
   {
     type: 'text',
     name: 'firstName',
-    label: 'First Name',
-    placeholder: 'Enter first name',
+    label: t('forms.employeeForm.firstName.label'),
+    placeholder: t('forms.employeeForm.firstName.placeholder'),
   },
   {
     type: 'text',
     name: 'lastName',
-    label: 'Last Name',
-    placeholder: 'Enter last name',
+    label: t('forms.employeeForm.lastName.label'),
+    placeholder: t('forms.employeeForm.lastName.placeholder'),
   },
   {
     type: 'date',
     name: 'dateOfBirth',
-    label: 'Date of Birth',
+    label: t('forms.employeeForm.dateOfBirth.label'),
   },
   {
     type: 'date',
     name: 'dateOfEmployment',
-    label: 'Date of Employment',
+    label: t('forms.employeeForm.dateOfEmployment.label'),
   },
   {
     type: 'tel',
     name: 'phone',
-    label: 'Phone Number',
-    placeholder: 'Enter phone number',
+    label: t('forms.employeeForm.phone.label'),
+    placeholder: t('forms.employeeForm.phone.placeholder'),
   },
   {
     type: 'email',
     name: 'email',
-    label: 'Email Address',
-    placeholder: 'Enter email address',
+    label: t('forms.employeeForm.email.label'),
+    placeholder: t('forms.employeeForm.email.placeholder'),
   },
   {
     type: 'select',
     name: 'department',
-    label: 'Department',
-    options: departmentOptions,
+    label: t('forms.employeeForm.department.label'),
+    options: getDepartmentOptions(t),
   },
   {
     type: 'select',
     name: 'position',
-    label: 'Position',
-    options: positionOptions,
+    label: t('forms.employeeForm.position.label'),
+    options: getPositionOptions(t),
   },
 ];

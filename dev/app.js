@@ -22,20 +22,47 @@ export class AppRoot extends i18nMixin(LitElement) {
     }
   `;
 
+  static properties = {
+    currentLanguage: {type: String},
+  };
+
+  constructor() {
+    super();
+    this.currentLanguage = this.i18n.language;
+  }
+
   firstUpdated() {
     const outlet = this.shadowRoot.getElementById('outlet');
     router.setOutlet(outlet);
     router.setRoutes(routes);
   }
 
-  handleLanguageChange(e) {
-    const newLang = e.detail.language;
-    this.i18n.changeLanguage(newLang);
+  async handleLanguageChange(e) {
+    try {
+      const newLang = e.detail.language;
+      await this.i18n.changeLanguage(newLang);
+      this.currentLanguage = newLang;
+      document.documentElement.lang = newLang;
+
+      this.requestUpdate();
+      this.dispatchEvent(
+        new CustomEvent('language-updated', {
+          detail: {language: newLang},
+          bubbles: true,
+          composed: true,
+        })
+      );
+    } catch (error) {
+      console.error('Error changing language:', error);
+    }
   }
 
   render() {
     return html`
-      <nav-bar @language-change="${this.handleLanguageChange}"></nav-bar>
+      <nav-bar
+        .currentLanguage="${this.currentLanguage}"
+        @language-change="${this.handleLanguageChange}"
+      ></nav-bar>
 
       <main id="outlet"></main>
     `;

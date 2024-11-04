@@ -2,35 +2,38 @@ import i18next from 'i18next';
 import en from './locales/en.js';
 import tr from './locales/tr.js';
 
-// Initialize i18next
-i18next.init({
-  lng: 'EN', // default language
+await i18next.init({
+  lng: 'en',
   resources: {
-    EN: en,
-    TR: tr,
+    en: en,
+    tr: tr,
   },
-  fallbackLng: 'EN',
+  fallbackLng: 'en',
   interpolation: {
     escapeValue: false,
   },
 });
 
-// Create a mixin for i18n functionality
 export const i18nMixin = (superClass) =>
   class extends superClass {
+    static properties = {
+      ...superClass.properties,
+      i18n: {type: Object},
+    };
+
     constructor() {
       super();
       this.i18n = i18next;
-      this.requestUpdate = this.requestUpdate.bind(this);
-
-      // Re-render when language changes
-      i18next.on('languageChanged', () => {
-        this.requestUpdate();
-      });
+      this._boundRequestUpdate = this.requestUpdate.bind(this);
+      this.i18n.on('languageChanged', this._boundRequestUpdate);
     }
 
-    // Helper method to translate keys
-    t(key) {
-      return i18next.t(key);
+    disconnectedCallback() {
+      super.disconnectedCallback?.();
+      this.i18n.off('languageChanged', this._boundRequestUpdate);
+    }
+
+    t(key, options = {}) {
+      return this.i18n.t(key, options);
     }
   };

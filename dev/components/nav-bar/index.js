@@ -160,7 +160,15 @@ export class NavBar extends LitElement {
   }
 
   handleLanguageChange(e) {
-    console.log('Language', e.detail.language);
+    this.dispatchEvent(
+      new CustomEvent('language-change', {
+        detail: {language: e.detail.language},
+        bubbles: true,
+        composed: true,
+      })
+    );
+
+    console.log('Language changed:', e.detail.language);
     this.closeMenu();
   }
 

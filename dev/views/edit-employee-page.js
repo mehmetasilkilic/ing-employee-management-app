@@ -1,13 +1,15 @@
 import {LitElement, html, css} from 'lit';
 import {Router} from '@vaadin/router';
 
-import {employeeSchema} from '../config/forms/add-edit-employee/validation.js';
-import {employeeFormFields} from '../config/forms/add-edit-employee/fields.js';
+import {i18nMixin} from '../localization/i18n.js';
+
+import {createEmployeeSchema} from '../config/forms/add-edit-employee/validation.js';
+import {getEmployeeFormFields} from '../config/forms/add-edit-employee/fields.js';
 
 import '../components/form-builder.js';
 import '../components/custom-icon.js';
 
-export class EditEmployeePage extends LitElement {
+export class EditEmployeePage extends i18nMixin(LitElement) {
   static properties = {
     employeeId: {type: String},
     employeeData: {type: Object},
@@ -127,11 +129,13 @@ export class EditEmployeePage extends LitElement {
       `;
     }
 
+    const formFields = getEmployeeFormFields(this.t.bind(this));
+
     return html`
       <div class="form-container">
         <form-builder
-          .schema=${employeeSchema}
-          .formFields=${employeeFormFields}
+          .schema=${createEmployeeSchema()}
+          .formFields=${formFields}
           .initialData=${this.employeeData}
           @form-submit=${this.handleFormSubmit}
         ></form-builder>

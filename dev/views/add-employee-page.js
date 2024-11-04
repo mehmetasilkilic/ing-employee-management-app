@@ -1,11 +1,13 @@
 import {LitElement, html, css} from 'lit';
 
-import {employeeSchema} from '../config/forms/add-edit-employee/validation.js';
-import {employeeFormFields} from '../config/forms/add-edit-employee/fields.js';
+import {i18nMixin} from '../localization/i18n.js';
+
+import {createEmployeeSchema} from '../config/forms/add-edit-employee/validation.js';
+import {getEmployeeFormFields} from '../config/forms/add-edit-employee/fields.js';
 
 import '../components/form-builder.js';
 
-export class AddEmployeePage extends LitElement {
+export class AddEmployeePage extends i18nMixin(LitElement) {
   static styles = css`
     :host {
       display: block;
@@ -39,16 +41,18 @@ export class AddEmployeePage extends LitElement {
   }
 
   render() {
+    const formFields = getEmployeeFormFields(this.t.bind(this));
+
     return html`
       <div class="page-container">
         <div class="top-section">
-          <h2 class="title">Add New Employee</h2>
+          <h2 class="title">${this.t('addEmployee.title')}</h2>
         </div>
 
         <div class="form-container">
           <form-builder
-            .schema=${employeeSchema}
-            .formFields=${employeeFormFields}
+            .schema=${createEmployeeSchema()}
+            .formFields=${formFields}
             @form-submit=${this.handleFormSubmit}
           ></form-builder>
         </div>

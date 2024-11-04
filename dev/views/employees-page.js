@@ -1,12 +1,14 @@
 import {LitElement, html, css} from 'lit';
 import {Router} from '@vaadin/router';
 
+import {i18nMixin} from '../localization/i18n.js';
+
 import '../components/custom-table.js';
 import '../components/custom-list.js';
 import '../components/custom-icon.js';
 import '../components/action-buttons.js';
 
-export class EmployeesPage extends LitElement {
+export class EmployeesPage extends i18nMixin(LitElement) {
   static properties = {
     employees: {type: Array},
     loading: {type: Boolean},
@@ -184,7 +186,8 @@ export class EmployeesPage extends LitElement {
     return html`
       <div classname="container">
         <div class="top-section">
-          <h2 class="title">Employees</h2>
+          <h2 class="title">${this.t('employees.title')}</h2>
+
           <div class="view-toggle">
             <button
               class=${this.viewMode === 'table' ? 'active' : ''}
