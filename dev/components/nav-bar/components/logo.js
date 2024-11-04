@@ -24,6 +24,17 @@ export class Logo extends LitElement {
       font-weight: bold;
       color: #333;
     }
+
+    @media (max-width: 768px) {
+      .logo-image {
+        width: 20px;
+        height: 20px;
+      }
+
+      .company-name {
+        font-size: 0.9rem;
+      }
+    }
   `;
 
   render() {

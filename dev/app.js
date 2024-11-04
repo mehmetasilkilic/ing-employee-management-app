@@ -28,6 +28,7 @@ export class AppRoot extends LitElement {
   render() {
     return html`
       <nav-bar @language-change="${this.handleLanguageChange}"></nav-bar>
+
       <main id="outlet"></main>
     `;
   }

@@ -35,6 +35,7 @@ export class CustomTable extends LitElement {
 
     .header-container {
       position: sticky;
+      overflow: hidden;
       top: 0;
       z-index: 1;
       background: white;

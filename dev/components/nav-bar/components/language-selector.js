@@ -88,6 +88,17 @@ export class LanguageSelector extends LitElement {
       font-size: 0.95rem;
       color: #333;
     }
+
+    @media (max-width: 768px) {
+      .language-options {
+        margin-top: 0.5rem;
+        width: 100%;
+      }
+
+      .language-button {
+        padding: 0;
+      }
+    }
   `;
 
   toggleLanguageOptions(e) {

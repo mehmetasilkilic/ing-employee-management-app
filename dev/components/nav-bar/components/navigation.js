@@ -41,6 +41,7 @@ export class Navigation extends LitElement {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      width: 100%;
     }
 
     .nav-button:hover {
@@ -51,6 +52,18 @@ export class Navigation extends LitElement {
       color: var(--primary-color);
       cursor: default;
       font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .nav-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .nav-button {
+        width: 100%;
+        padding: 1rem;
+      }
     }
   `;
 
