@@ -2,6 +2,7 @@ import {LitElement, html, css} from 'lit';
 
 import './pagination.js';
 import './custom-card.js';
+import './loading-overlay.js';
 
 export class CustomCardList extends LitElement {
   static properties = {
@@ -12,6 +13,7 @@ export class CustomCardList extends LitElement {
     totalItems: {type: Number},
     selectedItems: {type: Array},
     maxHeight: {type: String},
+    loading: {type: Boolean},
   };
 
   static styles = css`
@@ -24,6 +26,7 @@ export class CustomCardList extends LitElement {
       flex-direction: column;
       justify-content: space-between;
       height: 100%;
+      position: relative;
     }
 
     .fixed-header {
@@ -98,6 +101,7 @@ export class CustomCardList extends LitElement {
     this.totalItems = 0;
     this.selectedItems = undefined;
     this.maxHeight = '600px';
+    this.loading = false;
   }
 
   updated(changedProperties) {
@@ -175,6 +179,7 @@ export class CustomCardList extends LitElement {
   render() {
     return html`
       <div class="container">
+        <loading-overlay .loading=${this.loading}></loading-overlay>
         ${this.hasSelection
           ? html`
               <div class="fixed-header">
@@ -193,7 +198,9 @@ export class CustomCardList extends LitElement {
         <div class="scroll-container">
           <div class="card-grid">
             ${!this.data.length
-              ? html`<div class="empty-state">No data available</div>`
+              ? html`<div class="empty-state">
+                  ${this.loading ? 'Loading data...' : 'No data available'}
+                </div>`
               : this.data.map(
                   (item) => html`
                     <custom-card

@@ -1,6 +1,7 @@
 import {LitElement, html, css} from 'lit';
 
 import './pagination.js';
+import './loading-overlay.js';
 
 export class CustomTable extends LitElement {
   static properties = {
@@ -11,6 +12,7 @@ export class CustomTable extends LitElement {
     totalItems: {type: Number},
     selectedItems: {type: Array},
     maxHeight: {type: String},
+    loading: {type: Boolean},
   };
 
   static styles = css`
@@ -117,6 +119,7 @@ export class CustomTable extends LitElement {
     this.totalItems = 0;
     this.selectedItems = undefined;
     this.maxHeight = '700px';
+    this.loading = false;
   }
 
   updated(changedProperties) {
@@ -151,10 +154,8 @@ export class CustomTable extends LitElement {
     let newSelectedItems;
 
     if (isSelectAll) {
-      // Handle "Select All" case
       newSelectedItems = isChecked ? [...this.data] : [];
     } else {
-      // Handle individual item selection
       if (isChecked) {
         newSelectedItems = [...this.selectedItems, item];
       } else {
@@ -207,6 +208,7 @@ export class CustomTable extends LitElement {
   render() {
     return html`
       <div class="table-container">
+        <loading-overlay .loading=${this.loading}></loading-overlay>
         <div class="table-scroll-container">
           <table class="data-table">
             <thead class="header-container">
@@ -241,7 +243,9 @@ export class CustomTable extends LitElement {
                           : this.columns.length}
                         class="empty-state"
                       >
-                        No data available
+                        ${this.loading
+                          ? 'Loading data...'
+                          : 'No data available'}
                       </td>
                     </tr>
                   `

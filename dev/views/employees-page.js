@@ -261,19 +261,6 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   render() {
-    if (this.loading && !this.employees.length) {
-      return html`
-        <div class="container">
-          <div class="top-section">
-            <h2 class="title">${this.t('employees.title')}</h2>
-          </div>
-          <div class="table-container">
-            <div>Loading...</div>
-          </div>
-        </div>
-      `;
-    }
-
     return html`
       <div class="container">
         <div class="top-section">
@@ -302,12 +289,12 @@ export class EmployeesPage extends i18nMixin(LitElement) {
                 <custom-table
                   .columns=${this.tableColumns}
                   .data=${this.employees}
+                  .loading=${this.loading}
                   maxHeight=${'70vh'}
                   .pageSize=${this.pageSize}
                   .totalItems=${this.totalItems}
                   .currentPage=${this.currentPage}
                   .selectedItems=${this.selectedEmployees}
-                  ?disabled=${this.loading}
                   @page-change=${this.handlePageChange}
                   @selection-change=${this.handleSelectionChange}
                 ></custom-table>
@@ -316,12 +303,12 @@ export class EmployeesPage extends i18nMixin(LitElement) {
                 <custom-list
                   .columns=${this.tableColumns}
                   .data=${this.employees}
+                  .loading=${this.loading}
                   maxHeight=${'64.7vh'}
                   .pageSize=${this.pageSize}
                   .totalItems=${this.totalItems}
                   .currentPage=${this.currentPage}
                   .selectedItems=${this.selectedEmployees}
-                  ?disabled=${this.loading}
                   @page-change=${this.handlePageChange}
                   @selection-change=${this.handleSelectionChange}
                 ></custom-list>
