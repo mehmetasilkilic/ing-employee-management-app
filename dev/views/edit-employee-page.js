@@ -5,6 +5,8 @@ import {i18nMixin} from '../localization/i18n.js';
 
 import employeeService from '../../mockApi/service.js';
 
+import {confirmationStore} from '../stores/confirmation-store.js';
+
 import {createEmployeeSchema} from '../config/forms/add-edit-employee/validation.js';
 import {getEmployeeFormFields} from '../config/forms/add-edit-employee/fields.js';
 
@@ -114,24 +116,42 @@ export class EditEmployeePage extends i18nMixin(LitElement) {
   }
 
   async handleFormSubmit(e) {
-    // Show confirmation dialog
-    const confirmSave = confirm(
-      this.t('editEmployee.saveConfirmation', {
-        name: `${this.employeeData.firstName} ${this.employeeData.lastName}`,
-      })
-    );
+    try {
+      const formData = e.detail;
+      const employeeName = `${this.employeeData.firstName} ${this.employeeData.lastName}`;
 
-    if (confirmSave) {
-      try {
-        const formData = e.detail;
+      const confirmed = await confirmationStore.getState().show({
+        title: this.t('common.areYouSure', {
+          name: employeeName,
+        }),
+        message: this.t('editEmployee.saveConfirmation', {name: employeeName}),
+        confirmLabel: this.t('common.proceed'),
+        cancelLabel: this.t('common.cancel'),
+      });
 
+      if (confirmed) {
         await employeeService.updateEmployee(this.employeeData.id, formData);
         sessionStorage.removeItem('editEmployee');
+
+        // Show success confirmation before navigation
+        await confirmationStore.getState().show({
+          title: this.t('common.success'),
+          message: this.t('editEmployee.saveSuccess', {name: employeeName}),
+          confirmLabel: this.t('common.ok'),
+          cancelLabel: null,
+        });
+
         Router.go('/');
-      } catch (error) {
-        console.error('Error updating employee:', error);
-        alert(this.t('editEmployee.saveError'));
       }
+    } catch (error) {
+      console.error('Error updating employee:', error);
+
+      await confirmationStore.getState().show({
+        title: this.t('common.error'),
+        message: this.t('editEmployee.saveError'),
+        confirmLabel: this.t('common.ok'),
+        cancelLabel: null,
+      });
     }
   }
 

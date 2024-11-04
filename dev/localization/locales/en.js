@@ -4,16 +4,26 @@ export default {
       employees: 'Employees',
       addEmployee: 'Add New',
     },
+    common: {
+      ok: 'Okay',
+      proceed: 'Proceed',
+      cancel: 'Cancel',
+      success: 'Success',
+      error: 'Error',
+      areYouSure: 'Are You Sure?',
+    },
     employees: {
       title: 'Employee List',
       deleteConfirmation: 'Are you sure you want to delete the employee?',
       deleteError: 'Error deleting employee. Please try again.',
+      deleteSuccess: 'Employee deleted successfully.',
     },
     addEmployee: {
       title: 'Add New Employee',
     },
     editEmployee: {
       title: 'Edit Employee',
+      saveSuccess: 'Changes in employee info successfully submited',
       saveConfirmation:
         'Are you sure you want to save changes for the employee?',
       saveError: 'Error saving employee changes. Please try again.',
@@ -71,13 +81,13 @@ export default {
       },
       firstName: {
         required: 'First name is required',
-        min: 'First name must be at least {{min}} characters',
-        max: 'First name must be less than {{max}} characters',
+        min: 'First name must be at least 2 characters',
+        max: 'First name must be less than 50 characters',
       },
       lastName: {
         required: 'Last name is required',
-        min: 'Last name must be at least {{min}} characters',
-        max: 'Last name must be less than {{max}} characters',
+        min: 'Last name must be at least 2 characters',
+        max: 'Last name must be less than 50 characters',
       },
       dateOfBirth: {
         required: 'Date of birth is required',

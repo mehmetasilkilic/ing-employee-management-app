@@ -4,6 +4,7 @@ import {i18nMixin} from './localization/i18n.js';
 import {router, routes} from './config/router.js';
 
 import './components/nav-bar/index.js';
+import './components/confirmation-dialog.js';
 
 export class AppRoot extends i18nMixin(LitElement) {
   static styles = css`
@@ -59,6 +60,8 @@ export class AppRoot extends i18nMixin(LitElement) {
 
   render() {
     return html`
+      <confirmation-dialog></confirmation-dialog>
+
       <nav-bar
         .currentLanguage="${this.currentLanguage}"
         @language-change="${this.handleLanguageChange}"

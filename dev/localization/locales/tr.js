@@ -4,17 +4,28 @@ export default {
       employees: 'Personeller',
       addEmployee: 'Yeni Ekle',
     },
+    common: {
+      ok: 'Tamam',
+      proceed: 'Devam',
+      cancel: 'İptal',
+      success: 'Başarılı',
+      error: 'Hata',
+      areYouSure: 'Emin misiniz?',
+    },
     employees: {
       title: 'Personel Listesi',
       deleteConfirmation: 'Personeli silmek istediğinize emin misiniz?',
       deleteError:
         'Personeli silerken bir hata oluştu. Lütfen tekrar deneyiniz.',
+      deleteSuccess: 'Personel başarıyla silindi.',
     },
     addEmployee: {
       title: 'Yeni Personel Ekle',
     },
     editEmployee: {
       title: 'Personeli Düzenle',
+      saveSuccess:
+        'Personel bilgilerindeki değişiklikler başarıyla kaydedildi.',
       saveConfirmation:
         'Personel bilgilerindeki değişiklikleri kaydetmek istediğinizden emin misiniz?',
       saveError:
@@ -76,13 +87,13 @@ export default {
       },
       firstName: {
         required: 'Ad alanı zorunludur',
-        min: 'Ad en az {{min}} karakter olmalıdır',
-        max: 'Ad {{max}} karakterden az olmalıdır',
+        min: 'Ad en az 2 karakter olmalıdır',
+        max: 'Ad 50 karakterden az olmalıdır',
       },
       lastName: {
         required: 'Soyad alanı zorunludur',
-        min: 'Soyad en az {{min}} karakter olmalıdır',
-        max: 'Soyad {{max}} karakterden az olmalıdır',
+        min: 'Soyad en az 2 karakter olmalıdır',
+        max: 'Soyad 50 karakterden az olmalıdır',
       },
       dateOfBirth: {
         required: 'Doğum tarihi zorunludur',

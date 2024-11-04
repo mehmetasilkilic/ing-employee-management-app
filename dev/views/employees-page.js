@@ -4,6 +4,8 @@ import {Router} from '@vaadin/router';
 import {i18nMixin} from '../localization/i18n.js';
 import employeeService from '../../mockApi/service.js';
 
+import {confirmationStore} from '../stores/confirmation-store.js';
+
 import '../components/custom-table.js';
 import '../components/custom-list.js';
 import '../components/custom-icon.js';
@@ -142,25 +144,48 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   async handleDelete(employee) {
-    const confirmDelete = confirm(
-      this.t('employees.deleteConfirmation', {
-        name: `${employee.firstName} ${employee.lastName}`,
-      })
-    );
+    try {
+      const confirmed = await confirmationStore.getState().show({
+        title: this.t('common.areYouSure'),
+        message: this.t('employees.deleteConfirmation', {
+          name: `${employee.firstName} ${employee.lastName}`,
+        }),
+        confirmLabel: this.t('common.proceed'),
+        cancelLabel: this.t('common.cancel'),
+      });
 
-    if (confirmDelete) {
-      try {
+      if (confirmed) {
         await employeeService.deleteEmployee(employee.id);
-        // Force refresh data after deletion
+
+        // Show success confirmation
+        await confirmationStore.getState().show({
+          title: this.t('common.success'),
+          message: this.t('employees.deleteSuccess', {
+            name: `${employee.firstName} ${employee.lastName}`,
+          }),
+          confirmLabel: this.t('common.ok'),
+          cancelLabel: null,
+        });
+
+        // Handle pagination
         if (this.employees.length === 1 && this.currentPage > 1) {
           await this.fetchEmployees(this.currentPage - 1, true);
         } else {
           await this.fetchEmployees(this.currentPage, true);
         }
-      } catch (error) {
-        console.error('Error deleting employee:', error);
-        alert(this.t('employees.deleteError'));
       }
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+
+      await confirmationStore.getState().show({
+        title: this.t('common.error'),
+        message: this.t('employees.deleteError', {
+          name: `${employee.firstName} ${employee.lastName}`,
+          error: error.message,
+        }),
+        confirmLabel: this.t('common.ok'),
+        cancelLabel: null,
+      });
     }
   }
 
@@ -189,8 +214,8 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   get tableColumns() {
-    const departmentMap = {1: 'Analytics', 2: 'Tech', 3: 'HR', 4: 'Finance'};
-    const positionMap = {1: 'Junior', 2: 'Medior', 3: 'Senior', 4: 'Lead'};
+    const departmentMap = {1: 'Analytics', 2: 'Tech'};
+    const positionMap = {1: 'Junior', 2: 'Medior', 3: 'Senior'};
 
     return [
       {header: 'First Name', field: 'firstName'},
@@ -277,7 +302,7 @@ export class EmployeesPage extends i18nMixin(LitElement) {
                 <custom-table
                   .columns=${this.tableColumns}
                   .data=${this.employees}
-                  maxHeight=${'28rem'}
+                  maxHeight=${'70vh'}
                   .pageSize=${this.pageSize}
                   .totalItems=${this.totalItems}
                   .currentPage=${this.currentPage}
@@ -291,7 +316,7 @@ export class EmployeesPage extends i18nMixin(LitElement) {
                 <custom-list
                   .columns=${this.tableColumns}
                   .data=${this.employees}
-                  maxHeight=${'29rem'}
+                  maxHeight=${'64.7vh'}
                   .pageSize=${this.pageSize}
                   .totalItems=${this.totalItems}
                   .currentPage=${this.currentPage}
