@@ -3,6 +3,8 @@ import {Router} from '@vaadin/router';
 
 import {i18nMixin} from '../localization/i18n.js';
 
+import employeeService from '../../mockApi/service.js';
+
 import '../components/custom-table.js';
 import '../components/custom-list.js';
 import '../components/custom-icon.js';
@@ -14,15 +16,14 @@ export class EmployeesPage extends i18nMixin(LitElement) {
     loading: {type: Boolean},
     selectedEmployees: {type: Array},
     viewMode: {type: String},
+    currentPage: {type: Number},
+    totalItems: {type: Number},
+    pageSize: {type: Number},
   };
 
   static styles = css`
     :host {
       display: block;
-    }
-
-    .container {
-      color: var(--bg);
     }
 
     .table-container {
@@ -76,51 +77,47 @@ export class EmployeesPage extends i18nMixin(LitElement) {
     this.loading = true;
     this.selectedEmployees = [];
     this.viewMode = 'table';
+    this.currentPage = 1;
+    this.totalItems = 0;
+    this.pageSize = 12;
     this.fetchEmployees();
   }
 
-  async fetchEmployees() {
-    this.employees = [
-      {
-        id: 1,
-        firstName: 'John',
-        lastName: 'Doe',
-        dateOfEmployment: '2023-01-15',
-        dateOfBirth: '1999-01-15',
-        phone: '+90 555 555 55 55',
-        email: 'john@example.com',
-        department: 1,
-        position: 1,
-      },
-      {
-        id: 2,
-        firstName: 'Jane',
-        lastName: 'Smith',
-        dateOfEmployment: '2023-01-15',
-        dateOfBirth: '1999-01-15',
-        phone: '+90 555 555 55 55',
-        email: 'jane@example.com',
-        department: 2,
-        position: 2,
-      },
-    ];
-
-    this.loading = false;
+  async fetchEmployees(page = this.currentPage) {
+    this.loading = true;
+    try {
+      const result = await employeeService.getEmployees({
+        page,
+        pageSize: this.pageSize,
+      });
+      this.employees = result.data;
+      this.totalItems = result.metadata.totalItems;
+      this.currentPage = result.metadata.currentPage;
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    } finally {
+      this.loading = false;
+    }
   }
 
-  handleEdit(employee) {
+  async handleEdit(employee) {
     sessionStorage.setItem('editEmployee', JSON.stringify(employee));
     Router.go(`/edit-employee/${employee.id}`);
   }
 
-  handleDelete(employee) {
-    console.log('Delete employee:', employee);
-    // Implement delete logic
+  async handleDelete(employee) {
+    try {
+      await employeeService.deleteEmployee(employee.id);
+      await this.fetchEmployees();
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+    }
   }
 
-  handlePageChange(e) {
-    console.log('Page changed:', e.detail.page);
-    // Implement page change logic
+  async handlePageChange(e) {
+    const newPage = e.detail.page;
+    this.currentPage = newPage;
+    await this.fetchEmployees(newPage);
   }
 
   handleSelectionChange(e) {
@@ -132,8 +129,8 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   get tableColumns() {
-    const departmentMap = {1: 'Analytics', 2: 'Tech'};
-    const positionMap = {1: 'Junior', 2: 'Medior', 3: 'Senior'};
+    const departmentMap = {1: 'Analytics', 2: 'Tech', 3: 'HR', 4: 'Finance'};
+    const positionMap = {1: 'Junior', 2: 'Medior', 3: 'Senior', 4: 'Lead'};
 
     return [
       {header: 'First Name', field: 'firstName'},
@@ -184,7 +181,7 @@ export class EmployeesPage extends i18nMixin(LitElement) {
     }
 
     return html`
-      <div classname="container">
+      <div class="container">
         <div class="top-section">
           <h2 class="title">${this.t('employees.title')}</h2>
 
@@ -211,8 +208,9 @@ export class EmployeesPage extends i18nMixin(LitElement) {
                 .columns=${this.tableColumns}
                 .data=${this.employees}
                 maxHeight=${'28rem'}
-                .pageSize=${12}
-                .totalItems=${100}
+                .pageSize=${this.pageSize}
+                .totalItems=${this.totalItems}
+                .currentPage=${this.currentPage}
                 .selectedItems=${this.selectedEmployees}
                 @page-change=${this.handlePageChange}
                 @selection-change=${this.handleSelectionChange}
@@ -221,8 +219,9 @@ export class EmployeesPage extends i18nMixin(LitElement) {
                 .columns=${this.tableColumns}
                 .data=${this.employees}
                 maxHeight=${'29rem'}
-                .pageSize=${12}
-                .totalItems=${100}
+                .pageSize=${this.pageSize}
+                .totalItems=${this.totalItems}
+                .currentPage=${this.currentPage}
                 .selectedItems=${this.selectedEmployees}
                 @page-change=${this.handlePageChange}
                 @selection-change=${this.handleSelectionChange}
