@@ -200,11 +200,12 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   async handleDelete(employee) {
+    const employeeName = `${employee.firstName} ${employee.lastName}`;
     try {
       const confirmed = await confirmationStore.getState().show({
         title: this.t('common.areYouSure'),
         message: this.t('employees.deleteConfirmation', {
-          name: `${employee.firstName} ${employee.lastName}`,
+          employeeName: employeeName,
         }),
         confirmLabel: this.t('common.proceed'),
         cancelLabel: this.t('common.cancel'),
@@ -216,7 +217,7 @@ export class EmployeesPage extends i18nMixin(LitElement) {
         await confirmationStore.getState().show({
           title: this.t('common.success'),
           message: this.t('employees.deleteSuccess', {
-            name: `${employee.firstName} ${employee.lastName}`,
+            employeeName: employeeName,
           }),
           confirmLabel: this.t('common.ok'),
           cancelLabel: null,
@@ -234,8 +235,7 @@ export class EmployeesPage extends i18nMixin(LitElement) {
       await confirmationStore.getState().show({
         title: this.t('common.error'),
         message: this.t('employees.deleteError', {
-          name: `${employee.firstName} ${employee.lastName}`,
-          error: error.message,
+          employeeName: employeeName,
         }),
         confirmLabel: this.t('common.ok'),
         cancelLabel: null,

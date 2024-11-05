@@ -18,10 +18,10 @@ export default {
     },
     employees: {
       title: 'Personel Listesi',
-      deleteConfirmation: 'Personeli silmek istediğinize emin misiniz?',
-      deleteError:
-        'Personeli silerken bir hata oluştu. Lütfen tekrar deneyiniz.',
-      deleteSuccess: 'Personel başarıyla silindi.',
+      deleteConfirmation:
+        '{{employeeName}} isimli çalışanı silmek istediğinize emin misiniz?',
+      deleteSuccess: '{{employeeName}} başarıyla silindi',
+      deleteError: '{{employeeName}} silinirken bir hata oluştu',
       search: 'Arama...',
     },
     addEmployee: {

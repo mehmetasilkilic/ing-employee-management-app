@@ -18,9 +18,9 @@ export default {
     },
     employees: {
       title: 'Employee List',
-      deleteConfirmation: 'Are you sure you want to delete the employee?',
-      deleteError: 'Error deleting employee. Please try again.',
-      deleteSuccess: 'Employee deleted successfully.',
+      deleteConfirmation: 'Are you sure you want to delete {{employeeName}}?',
+      deleteSuccess: 'Employee {{employeeName}} was successfully deleted',
+      deleteError: 'An error occurred while deleting {{employeeName}}',
       search: 'Search...',
     },
     addEmployee: {
