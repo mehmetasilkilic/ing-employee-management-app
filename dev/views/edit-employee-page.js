@@ -121,10 +121,10 @@ export class EditEmployeePage extends i18nMixin(LitElement) {
       const employeeName = `${this.employeeData.firstName} ${this.employeeData.lastName}`;
 
       const confirmed = await confirmationStore.getState().show({
-        title: this.t('common.areYouSure', {
-          name: employeeName,
+        title: this.t('common.areYouSure'),
+        message: this.t('editEmployee.saveConfirmation', {
+          employeeName: employeeName,
         }),
-        message: this.t('editEmployee.saveConfirmation', {name: employeeName}),
         confirmLabel: this.t('common.proceed'),
         cancelLabel: this.t('common.cancel'),
       });
@@ -133,10 +133,11 @@ export class EditEmployeePage extends i18nMixin(LitElement) {
         await employeeService.updateEmployee(this.employeeData.id, formData);
         sessionStorage.removeItem('editEmployee');
 
-        // Show success confirmation before navigation
         await confirmationStore.getState().show({
           title: this.t('common.success'),
-          message: this.t('editEmployee.saveSuccess', {name: employeeName}),
+          message: this.t('editEmployee.saveSuccess', {
+            employeeName: employeeName,
+          }),
           confirmLabel: this.t('common.ok'),
           cancelLabel: null,
         });

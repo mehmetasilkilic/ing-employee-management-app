@@ -2,7 +2,10 @@ import {LitElement, html, css} from 'lit';
 import {Router} from '@vaadin/router';
 
 import {i18nMixin} from '../localization/i18n.js';
+
 import employeeService from '../../mockApi/service.js';
+
+import {confirmationStore} from '../stores/confirmation-store.js';
 
 import {createEmployeeSchema} from '../config/forms/add-edit-employee/validation.js';
 import {getEmployeeFormFields} from '../config/forms/add-edit-employee/fields.js';
@@ -65,14 +68,38 @@ export class AddEmployeePage extends i18nMixin(LitElement) {
       this.loading = true;
       const formData = e.detail;
 
-      await employeeService.addEmployee(formData);
+      const confirmed = await confirmationStore.getState().show({
+        title: this.t('common.areYouSure'),
+        message: this.t('addEmployee.saveConfirmation', {
+          employeeName: `${formData.firstName} ${formData.lastName}`,
+        }),
+        confirmLabel: this.t('common.proceed'),
+        cancelLabel: this.t('common.cancel'),
+      });
 
-      alert(this.t('addEmployee.successMessage'));
+      if (confirmed) {
+        await employeeService.addEmployee(formData);
 
-      Router.go('/');
+        await confirmationStore.getState().show({
+          title: this.t('common.success'),
+          message: this.t('addEmployee.saveSuccess', {
+            employeeName: `${formData.firstName} ${formData.lastName}`,
+          }),
+          confirmLabel: this.t('common.ok'),
+          cancelLabel: null,
+        });
+
+        Router.go('/');
+      }
     } catch (error) {
       console.error('Error adding employee:', error);
-      alert(this.t('addEmployee.errorMessage'));
+
+      await confirmationStore.getState().show({
+        title: this.t('common.error'),
+        message: this.t('addEmployee.saveError'),
+        confirmLabel: this.t('common.ok'),
+        cancelLabel: null,
+      });
     } finally {
       this.loading = false;
     }

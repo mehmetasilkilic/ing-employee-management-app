@@ -25,12 +25,18 @@ export default {
     },
     addEmployee: {
       title: 'Add New Employee',
+      saveSuccess: 'Employee {{employeeName}} was successfully added',
+      saveConfirmation:
+        'Are you sure you want to add {{employeeName}} as a new employee?',
+      saveError:
+        'An error occurred while adding the employee. Please try again.',
     },
     editEmployee: {
       title: 'Edit Employee',
-      saveSuccess: 'Changes in employee info successfully submited',
+      saveSuccess:
+        'Changes in employee {{employeeName}} info successfully submitted',
       saveConfirmation:
-        'Are you sure you want to save changes for the employee?',
+        'Are you sure you want to save changes for {{employeeName}}?',
       saveError: 'Error saving employee changes. Please try again.',
     },
     forms: {

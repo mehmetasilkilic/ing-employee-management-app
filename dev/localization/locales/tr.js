@@ -25,16 +25,19 @@ export default {
       search: 'Arama...',
     },
     addEmployee: {
-      title: 'Yeni Personel Ekle',
+      title: 'Çalışan Ekle',
+      saveSuccess: '{{employeeName}} başarıyla eklendi',
+      saveConfirmation:
+        '{{employeeName}} isimli çalışanı eklemek istediğinize emin misiniz?',
+      saveError: 'Çalışan eklenirken bir hata oluştu. Lütfen tekrar deneyin.',
     },
     editEmployee: {
-      title: 'Personeli Düzenle',
-      saveSuccess:
-        'Personel bilgilerindeki değişiklikler başarıyla kaydedildi.',
+      title: 'Çalışan Düzenle',
+      saveSuccess: '{{employeeName}} çalışan bilgileri başarıyla güncellendi',
       saveConfirmation:
-        'Personel bilgilerindeki değişiklikleri kaydetmek istediğinizden emin misiniz?',
+        '{{employeeName}} için değişiklikleri kaydetmek istediğinize emin misiniz?',
       saveError:
-        'Personel bilgileri kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.',
+        'Değişiklikler kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.',
     },
     forms: {
       departments: {
