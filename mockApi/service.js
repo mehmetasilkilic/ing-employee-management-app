@@ -1,24 +1,17 @@
 import {mockData} from './mockData.js';
 
+import {employeeStore} from '../dev/stores/employee-store.js';
+
 class EmployeeService {
   constructor() {
     this.initializeData();
   }
 
   initializeData() {
-    const storedData = localStorage.getItem('employees');
-    if (storedData) {
-      this.employees = JSON.parse(storedData);
-    } else {
-      this.employees = [...mockData];
-      this.saveToStorage();
+    const employees = employeeStore.getState().employees;
+    if (employees.length === 0) {
+      employeeStore.getState().setEmployees([...mockData]);
     }
-  }
-
-  saveToStorage() {
-    localStorage.setItem('employees', JSON.stringify(this.employees));
-    mockData.length = 0;
-    mockData.push(...this.employees);
   }
 
   refreshData() {
@@ -43,7 +36,7 @@ class EmployeeService {
           this.refreshData();
         }
 
-        let filteredEmployees = [...this.employees];
+        let filteredEmployees = [...employeeStore.getState().employees];
 
         if (searchTerm) {
           filteredEmployees = filteredEmployees.filter((emp) => {
@@ -97,8 +90,7 @@ class EmployeeService {
           ...employeeData,
           id: new Date().getTime(),
         };
-        this.employees.unshift(newEmployee);
-        this.saveToStorage();
+        employeeStore.getState().addEmployee(newEmployee);
         resolve(newEmployee);
       }, 300);
     });
@@ -107,15 +99,15 @@ class EmployeeService {
   async updateEmployee(id, employeeData) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const index = this.employees.findIndex((emp) => emp.id === id);
+        const employees = employeeStore.getState().employees;
+        const index = employees.findIndex((emp) => emp.id === id);
         if (index !== -1) {
           const updatedEmployee = {
-            ...this.employees[index],
+            ...employees[index],
             ...employeeData,
             id,
           };
-          this.employees[index] = updatedEmployee;
-          this.saveToStorage();
+          employeeStore.getState().updateEmployee(id, updatedEmployee);
           resolve(updatedEmployee);
         } else {
           reject(new Error('Employee not found'));
@@ -127,10 +119,10 @@ class EmployeeService {
   async deleteEmployee(id) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const index = this.employees.findIndex((emp) => emp.id === id);
+        const employees = employeeStore.getState().employees;
+        const index = employees.findIndex((emp) => emp.id === id);
         if (index !== -1) {
-          this.employees.splice(index, 1);
-          this.saveToStorage();
+          employeeStore.getState().deleteEmployee(id);
           resolve({success: true});
         } else {
           reject(new Error('Employee not found'));
