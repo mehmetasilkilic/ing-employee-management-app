@@ -11,6 +11,10 @@ npm i
 ## Testing
 
 ```bash
+npx playwright install
+```
+
+```bash
 npm test
 ```
 
