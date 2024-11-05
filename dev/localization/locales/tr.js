@@ -18,6 +18,7 @@ export default {
     },
     employees: {
       title: 'Personel Listesi',
+      fetchError: 'Çalışanlar yüklenemedi.',
       deleteConfirmation:
         '{{employeeName}} isimli çalışanı silmek istediğinize emin misiniz?',
       deleteSuccess: '{{employeeName}} başarıyla silindi',

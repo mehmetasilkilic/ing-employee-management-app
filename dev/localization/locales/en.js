@@ -18,6 +18,7 @@ export default {
     },
     employees: {
       title: 'Employee List',
+      fetchError: 'Unable to load employees.',
       deleteConfirmation: 'Are you sure you want to delete {{employeeName}}?',
       deleteSuccess: 'Employee {{employeeName}} was successfully deleted',
       deleteError: 'An error occurred while deleting {{employeeName}}',

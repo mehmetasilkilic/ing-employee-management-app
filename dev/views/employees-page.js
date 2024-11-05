@@ -179,14 +179,24 @@ export class EmployeesPage extends i18nMixin(LitElement) {
       }
     } catch (error) {
       console.error('Error fetching employees:', error);
-      this.dispatchEvent(
-        new CustomEvent('error', {
-          detail: {
-            message: 'Failed to fetch employees',
-            error,
-          },
-        })
-      );
+
+      if (this.isConnected) {
+        await confirmationStore.getState().show({
+          title: this.t('common.error'),
+          message: this.t('employees.fetchError'),
+          confirmLabel: this.t('common.ok'),
+          cancelLabel: null,
+        });
+
+        this.dispatchEvent(
+          new CustomEvent('error', {
+            detail: {
+              message: 'Failed to fetch employees',
+              error,
+            },
+          })
+        );
+      }
     } finally {
       if (this.isConnected) {
         this.loading = false;
