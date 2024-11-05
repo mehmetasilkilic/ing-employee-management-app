@@ -1,7 +1,9 @@
 import {LitElement, html, css} from 'lit';
 import {z} from 'zod';
 
-export class FormBuilder extends LitElement {
+import {i18nMixin} from '../localization/i18n';
+
+export class FormBuilder extends i18nMixin(LitElement) {
   static styles = css`
     :host {
       display: block;
@@ -235,7 +237,7 @@ export class FormBuilder extends LitElement {
             .value=${this.formData[field.name] || ''}
             @change=${this.handleInput}
           >
-            <option value="">Select ${field.label}</option>
+            <option value="">${field.label}</option>
             ${field.options.map(
               (option) => html`
                 <option value=${option.value}>${option.label}</option>
@@ -294,7 +296,7 @@ export class FormBuilder extends LitElement {
         ${this.renderFormGroups()}
         <div class="form-row">
           <div class="actions">
-            <button type="submit">Submit</button>
+            <button type="submit">${this.t('common.submit')}</button>
           </div>
         </div>
       </form>

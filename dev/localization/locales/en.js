@@ -2,7 +2,7 @@ export default {
   translation: {
     nav: {
       employees: 'Employees',
-      addEmployee: 'Add New',
+      addNew: 'Add New',
     },
     common: {
       ok: 'Okay',
@@ -11,13 +11,17 @@ export default {
       success: 'Success',
       error: 'Error',
       areYouSure: 'Are You Sure?',
+      actions: 'Actions',
+      submit: 'Submit',
+      selectAll: 'Select All',
+      loading: 'Loading...',
     },
     employees: {
       title: 'Employee List',
       deleteConfirmation: 'Are you sure you want to delete the employee?',
       deleteError: 'Error deleting employee. Please try again.',
       deleteSuccess: 'Employee deleted successfully.',
-      search: "Search..."
+      search: 'Search...',
     },
     addEmployee: {
       title: 'Add New Employee',
@@ -92,9 +96,11 @@ export default {
       },
       dateOfBirth: {
         required: 'Date of birth is required',
+        tooYoung: 'Employee must be at least 18 years old',
       },
       dateOfEmployment: {
         required: 'Employment date is required',
+        futureDate: 'Employment date cannot be in the future',
       },
       department: {
         required: 'Department is required',

@@ -1,9 +1,10 @@
 import {LitElement, html, css} from 'lit';
 
+import {i18nMixin} from '../localization/i18n.js';
+
 import './pagination.js';
 import './loading-overlay.js';
-
-export class CustomTable extends LitElement {
+export class CustomTable extends i18nMixin(LitElement) {
   static properties = {
     columns: {type: Array},
     data: {type: Array},
@@ -208,7 +209,10 @@ export class CustomTable extends LitElement {
   render() {
     return html`
       <div class="table-container">
-        <loading-overlay .loading=${this.loading}></loading-overlay>
+        <loading-overlay
+          .loading=${this.loading}
+          .text=${this.t('common.loading')}
+        ></loading-overlay>
         <div class="table-scroll-container">
           <table class="data-table">
             <thead class="header-container">

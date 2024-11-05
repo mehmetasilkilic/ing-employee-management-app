@@ -24,7 +24,7 @@ export class AppRoot extends i18nMixin(LitElement) {
   `;
 
   static properties = {
-    currentLanguage: {type: String},
+    currentLanguage: {type: String, reflect: true},
   };
 
   constructor() {
@@ -45,8 +45,8 @@ export class AppRoot extends i18nMixin(LitElement) {
       this.currentLanguage = newLang;
       document.documentElement.lang = newLang;
 
-      this.requestUpdate();
-      this.dispatchEvent(
+      // Dispatch event after language change is complete
+      window.dispatchEvent(
         new CustomEvent('language-updated', {
           detail: {language: newLang},
           bubbles: true,
@@ -55,6 +55,12 @@ export class AppRoot extends i18nMixin(LitElement) {
       );
     } catch (error) {
       console.error('Error changing language:', error);
+    }
+  }
+
+  updated(changedProperties) {
+    if (changedProperties.has('currentLanguage')) {
+      this.requestUpdate();
     }
   }
 

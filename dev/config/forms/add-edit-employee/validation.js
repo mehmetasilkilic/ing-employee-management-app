@@ -4,6 +4,13 @@ import i18next from 'i18next';
 export const createEmployeeSchema = () => {
   const t = i18next.t.bind(i18next);
 
+  const getYearsDifference = (date1, date2) => {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    const diffInYears = (d2 - d1) / (1000 * 60 * 60 * 24 * 365.25);
+    return diffInYears;
+  };
+
   return z.object({
     firstName: z
       .string()
@@ -15,10 +22,29 @@ export const createEmployeeSchema = () => {
       .max(50, {message: t('validation.lastName.max', {max: 50})}),
     dateOfBirth: z
       .string()
-      .min(1, {message: t('validation.dateOfBirth.required')}),
+      .min(1, {message: t('validation.dateOfBirth.required')})
+      .refine(
+        (date) => {
+          const age = getYearsDifference(date, new Date());
+          return age >= 18;
+        },
+        {
+          message: t('validation.dateOfBirth.tooYoung'),
+        }
+      ),
     dateOfEmployment: z
       .string()
-      .min(1, {message: t('validation.dateOfEmployment.required')}),
+      .min(1, {message: t('validation.dateOfEmployment.required')})
+      .refine(
+        (date) => {
+          const employmentDate = new Date(date);
+          const today = new Date();
+          return employmentDate <= today;
+        },
+        {
+          message: t('validation.dateOfEmployment.futureDate'),
+        }
+      ),
     phone: z
       .string()
       .min(1, {message: t('validation.phone.required')})

@@ -1,28 +1,15 @@
 import {LitElement, html, css} from 'lit';
-
+import {i18nMixin} from '../../../localization/i18n.js';
 import '../../custom-icon';
 
-export class Navigation extends LitElement {
+export class Navigation extends i18nMixin(LitElement) {
   static properties = {
     currentPath: {type: String},
-    navItems: {type: Array},
   };
 
   constructor() {
     super();
     this.currentPath = window.location.pathname;
-    this.navItems = [
-      {
-        path: '/',
-        text: 'Employees',
-        icon: 'people',
-      },
-      {
-        path: '/add-employee',
-        text: 'Add New',
-        icon: 'person_add',
-      },
-    ];
   }
 
   static styles = css`
@@ -88,6 +75,21 @@ export class Navigation extends LitElement {
     }
   }
 
+  get navItems() {
+    return [
+      {
+        path: '/',
+        text: this.t('nav.employees'),
+        icon: 'people',
+      },
+      {
+        path: '/add-employee',
+        text: this.t('nav.addNew'),
+        icon: 'person_add',
+      },
+    ];
+  }
+
   render() {
     return html`
       <div class="nav-buttons">
@@ -98,7 +100,7 @@ export class Navigation extends LitElement {
               class="nav-button ${this.isActive(item.path)}"
             >
               <custom-icon icon="${item.icon}" size="18px"></custom-icon>
-              <span> ${item.text} </span>
+              <span>${item.text}</span>
             </a>
           `
         )}

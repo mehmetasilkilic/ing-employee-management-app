@@ -283,26 +283,52 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   get tableColumns() {
-    const departmentMap = {1: 'Analytics', 2: 'Tech'};
-    const positionMap = {1: 'Junior', 2: 'Medior', 3: 'Senior'};
+    const departmentMap = {
+      1: this.t('forms.departments.analytics'),
+      2: this.t('forms.departments.tech'),
+    };
+
+    const positionMap = {
+      1: this.t('forms.positions.junior'),
+      2: this.t('forms.positions.medior'),
+      3: this.t('forms.positions.senior'),
+    };
 
     return [
-      {header: 'First Name', field: 'firstName'},
-      {header: 'Last Name', field: 'lastName'},
-      {header: 'Date of Employment', field: 'dateOfEmployment'},
-      {header: 'Date of Birth', field: 'dateOfBirth'},
-      {header: 'Phone', field: 'phone'},
-      {header: 'Email', field: 'email'},
       {
-        header: 'Department',
+        header: this.t('forms.employeeForm.firstName.label'),
+        field: 'firstName',
+      },
+      {
+        header: this.t('forms.employeeForm.lastName.label'),
+        field: 'lastName',
+      },
+      {
+        header: this.t('forms.employeeForm.dateOfEmployment.label'),
+        field: 'dateOfEmployment',
+      },
+      {
+        header: this.t('forms.employeeForm.dateOfBirth.label'),
+        field: 'dateOfBirth',
+      },
+      {
+        header: this.t('forms.employeeForm.phone.label'),
+        field: 'phone',
+      },
+      {
+        header: this.t('forms.employeeForm.email.label'),
+        field: 'email',
+      },
+      {
+        header: this.t('forms.employeeForm.department.label'),
         template: (employee) => departmentMap[employee.department] || '-',
       },
       {
-        header: 'Position',
+        header: this.t('forms.employeeForm.position.label'),
         template: (employee) => positionMap[employee.position] || '-',
       },
       {
-        header: 'Actions',
+        header: this.t('common.actions'),
         style: {width: '120px'},
         component: (employee) => html`
           <action-buttons
@@ -311,13 +337,13 @@ export class EmployeesPage extends i18nMixin(LitElement) {
               {
                 type: 'edit',
                 icon: 'edit',
-                label: 'Edit employee',
+                label: 'Edit Employee',
                 event: 'edit',
               },
               {
                 type: 'delete',
                 icon: 'delete',
-                label: 'Delete employee',
+                label: 'Add Employee',
                 event: 'delete',
               },
             ]}

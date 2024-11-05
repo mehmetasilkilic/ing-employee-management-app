@@ -2,7 +2,7 @@ export default {
   translation: {
     nav: {
       employees: 'Personeller',
-      addEmployee: 'Yeni Ekle',
+      addNew: 'Yeni Ekle',
     },
     common: {
       ok: 'Tamam',
@@ -11,6 +11,10 @@ export default {
       success: 'Başarılı',
       error: 'Hata',
       areYouSure: 'Emin misiniz?',
+      actions: 'İşlemler',
+      submit: 'Kaydet',
+      selectAll: 'Hepsini Seç',
+      loading: 'Yükleniyor...',
     },
     employees: {
       title: 'Personel Listesi',
@@ -33,45 +37,43 @@ export default {
         'Personel bilgileri kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.',
     },
     forms: {
-      addEditEmployee: {
-        departments: {
-          analytics: 'Analitik',
-          tech: 'Teknoloji',
+      departments: {
+        analytics: 'Analitik',
+        tech: 'Teknoloji',
+      },
+      positions: {
+        junior: 'Junior',
+        medior: 'Medior',
+        senior: 'Kıdemli',
+      },
+      employeeForm: {
+        firstName: {
+          label: 'Ad',
+          placeholder: 'Adınızı girin',
         },
-        positions: {
-          junior: 'Junior',
-          medior: 'Medior',
-          senior: 'Kıdemli',
+        lastName: {
+          label: 'Soyad',
+          placeholder: 'Soyadınızı girin',
         },
-        employeeForm: {
-          firstName: {
-            label: 'Ad',
-            placeholder: 'Adınızı girin',
-          },
-          lastName: {
-            label: 'Soyad',
-            placeholder: 'Soyadınızı girin',
-          },
-          dateOfBirth: {
-            label: 'Doğum Tarihi',
-          },
-          dateOfEmployment: {
-            label: 'İşe Başlama Tarihi',
-          },
-          phone: {
-            label: 'Telefon Numarası',
-            placeholder: 'Telefon numaranızı girin',
-          },
-          email: {
-            label: 'E-posta Adresi',
-            placeholder: 'E-posta adresinizi girin',
-          },
-          department: {
-            label: 'Departman',
-          },
-          position: {
-            label: 'Pozisyon',
-          },
+        dateOfBirth: {
+          label: 'Doğum Tarihi',
+        },
+        dateOfEmployment: {
+          label: 'İşe Başlama Tarihi',
+        },
+        phone: {
+          label: 'Telefon Numarası',
+          placeholder: 'Telefon numaranızı girin',
+        },
+        email: {
+          label: 'E-posta Adresi',
+          placeholder: 'E-posta adresinizi girin',
+        },
+        department: {
+          label: 'Departman',
+        },
+        position: {
+          label: 'Pozisyon',
         },
       },
     },
@@ -98,9 +100,11 @@ export default {
       },
       dateOfBirth: {
         required: 'Doğum tarihi zorunludur',
+        tooYoung: 'Çalışan en az 18 yaşında olmalıdır',
       },
       dateOfEmployment: {
         required: 'İşe başlama tarihi zorunludur',
+        futureDate: 'İşe başlama tarihi gelecekte bir tarih olamaz',
       },
       department: {
         required: 'Departman seçimi zorunludur',

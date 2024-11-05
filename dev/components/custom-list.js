@@ -1,10 +1,12 @@
 import {LitElement, html, css} from 'lit';
 
+import {i18nMixin} from '../localization/i18n.js';
+
 import './pagination.js';
 import './custom-card.js';
 import './loading-overlay.js';
 
-export class CustomCardList extends LitElement {
+export class CustomCardList extends i18nMixin(LitElement) {
   static properties = {
     columns: {type: Array},
     data: {type: Array},
@@ -189,7 +191,7 @@ export class CustomCardList extends LitElement {
                     .checked=${this.isAllSelected()}
                     @change=${this.handleSelectAll}
                   />
-                  <span>Select All</span>
+                  <span>${this.t('common.selectAll')}</span>
                 </div>
               </div>
             `
