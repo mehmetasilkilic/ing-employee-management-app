@@ -1,7 +1,7 @@
 import {LitElement, html, css} from 'lit';
 import {i18nMixin} from './localization/i18n.js';
-
 import {router, routes} from './config/router.js';
+import {languageStore} from './stores/language-store';
 
 import './components/nav-bar/index.js';
 import './components/confirmation-dialog.js';
@@ -29,7 +29,17 @@ export class AppRoot extends i18nMixin(LitElement) {
 
   constructor() {
     super();
-    this.currentLanguage = this.i18n.language;
+    this.currentLanguage = languageStore.getState().language;
+
+    this.unsubscribe = languageStore.subscribe((state) => {
+      this.currentLanguage = state.language;
+      this.requestUpdate();
+    });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.unsubscribe?.();
   }
 
   firstUpdated() {
@@ -39,28 +49,11 @@ export class AppRoot extends i18nMixin(LitElement) {
   }
 
   async handleLanguageChange(e) {
-    try {
-      const newLang = e.detail.language;
-      await this.i18n.changeLanguage(newLang);
-      this.currentLanguage = newLang;
-      document.documentElement.lang = newLang;
-
-      // Dispatch event after language change is complete
-      window.dispatchEvent(
-        new CustomEvent('language-updated', {
-          detail: {language: newLang},
-          bubbles: true,
-          composed: true,
-        })
-      );
-    } catch (error) {
-      console.error('Error changing language:', error);
-    }
-  }
-
-  updated(changedProperties) {
-    if (changedProperties.has('currentLanguage')) {
-      this.requestUpdate();
+    const success = await languageStore
+      .getState()
+      .setLanguage(e.detail.language);
+    if (!success) {
+      console.error('Failed to change language');
     }
   }
 

@@ -1,6 +1,5 @@
 import {LitElement, html, css} from 'lit';
-
-import i18next from 'i18next';
+import {languageStore} from '../../../stores/language-store';
 
 export class LanguageSelector extends LitElement {
   static properties = {
@@ -10,7 +9,7 @@ export class LanguageSelector extends LitElement {
 
   constructor() {
     super();
-    this.currentLanguage = i18next.language;
+    this.currentLanguage = languageStore.getState().language;
     this.languages = [
       {
         code: 'en',
@@ -24,6 +23,12 @@ export class LanguageSelector extends LitElement {
       },
     ];
     this._handleDocumentClick = this._handleDocumentClick.bind(this);
+
+    // Subscribe to store updates
+    this.unsubscribe = languageStore.subscribe((state) => {
+      this.currentLanguage = state.language;
+      this.requestUpdate();
+    });
   }
 
   static styles = css`
@@ -131,12 +136,15 @@ export class LanguageSelector extends LitElement {
     super.disconnectedCallback();
     document.removeEventListener('click', this._handleDocumentClick);
     window.removeEventListener('language-updated', this._handleLanguageUpdated);
+    this.unsubscribe?.();
   }
 
   async selectLanguage(lang) {
     if (lang === this.currentLanguage) return;
 
-    try {
+    const success = await languageStore.getState().setLanguage(lang);
+
+    if (success) {
       this.dispatchEvent(
         new CustomEvent('language-change', {
           detail: {language: lang},
@@ -147,8 +155,6 @@ export class LanguageSelector extends LitElement {
 
       const options = this.shadowRoot.querySelector('.language-options');
       options.classList.remove('show');
-    } catch (error) {
-      console.error('Failed to change language:', error);
     }
   }
 
