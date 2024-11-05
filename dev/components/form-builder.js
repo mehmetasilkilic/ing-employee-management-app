@@ -176,10 +176,16 @@ export class FormBuilder extends i18nMixin(LitElement) {
   handleSubmit(e) {
     e.preventDefault();
 
-    if (!this.schema) return;
+    if (!this.schema) {
+      this.dispatchEvent(
+        new CustomEvent('form-submit', {
+          detail: this.formData,
+        })
+      );
+      return;
+    }
 
     try {
-      // Validate entire form
       this.schema.parse(this.formData);
 
       this.dispatchEvent(
@@ -189,7 +195,6 @@ export class FormBuilder extends i18nMixin(LitElement) {
       );
     } catch (error) {
       if (error instanceof z.ZodError) {
-        // Update errors object with all validation errors
         this.errors = error.errors.reduce((acc, err) => {
           const fieldName = err.path[0];
           acc[fieldName] = err.message;

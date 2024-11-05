@@ -179,7 +179,9 @@ suite('form-builder', () => {
       `);
 
       const form = el.shadowRoot.querySelector('form');
-      form.dispatchEvent(new Event('submit'));
+      // Create a submit event with preventDefault available
+      const submitEvent = new SubmitEvent('submit', {cancelable: true});
+      form.dispatchEvent(submitEvent);
 
       await el.updateComplete;
 
@@ -226,7 +228,9 @@ suite('form-builder', () => {
 
       setTimeout(() => {
         const form = el.shadowRoot.querySelector('form');
-        form.dispatchEvent(new Event('submit'));
+        // Create a submit event with preventDefault available
+        const submitEvent = new SubmitEvent('submit', {cancelable: true});
+        form.dispatchEvent(submitEvent);
       });
 
       const {detail} = await oneEvent(el, 'form-submit');
@@ -278,7 +282,9 @@ suite('form-builder', () => {
       `);
 
       const form = el.shadowRoot.querySelector('form');
-      form.dispatchEvent(new Event('submit'));
+      // Create a submit event with preventDefault available
+      const submitEvent = new SubmitEvent('submit', {cancelable: true});
+      form.dispatchEvent(submitEvent);
 
       await el.updateComplete;
       assert.deepEqual(el.errors, {});
