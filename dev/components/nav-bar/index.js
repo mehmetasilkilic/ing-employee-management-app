@@ -168,7 +168,6 @@ export class NavBar extends LitElement {
       })
     );
 
-    console.log('Language changed:', e.detail.language);
     this.closeMenu();
   }
 
