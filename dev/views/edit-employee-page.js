@@ -6,6 +6,7 @@ import {i18nMixin} from '../localization/i18n.js';
 import employeeService from '../../mockApi/service.js';
 
 import {confirmationStore} from '../stores/confirmation-store.js';
+import {employeeStore} from '../stores/employee-store.js';
 
 import {createEmployeeSchema} from '../config/forms/add-edit-employee/validation.js';
 import {getEmployeeFormFields} from '../config/forms/add-edit-employee/fields.js';
@@ -16,7 +17,7 @@ import '../components/custom-icon.js';
 export class EditEmployeePage extends i18nMixin(LitElement) {
   static properties = {
     employeeId: {type: String},
-    employeeData: {type: Object},
+    employeeData: {type: Object, state: true},
   };
 
   static styles = css`
@@ -84,35 +85,28 @@ export class EditEmployeePage extends i18nMixin(LitElement) {
     super();
     this.employeeId = '';
     this.employeeData = null;
+    this._handleEmployeeUpdate = this.handleEmployeeUpdate.bind(this);
   }
 
   connectedCallback() {
     super.connectedCallback();
     this.loadEmployeeData();
+    window.addEventListener('employee-updated', this._handleEmployeeUpdate);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('employee-updated', this._handleEmployeeUpdate);
+    employeeStore.getState().clearEditingEmployee();
+  }
+
+  handleEmployeeUpdate(event) {
+    this.employeeData = event.detail.employee;
   }
 
   loadEmployeeData() {
-    const storedEmployee = sessionStorage.getItem('editEmployee');
-    if (storedEmployee) {
-      const employee = JSON.parse(storedEmployee);
-      this.employeeData = {
-        ...employee,
-        dateOfBirth: this.formatDateForInput(employee.dateOfBirth),
-        dateOfEmployment: this.formatDateForInput(employee.dateOfEmployment),
-      };
-
-      sessionStorage.removeItem('editEmployee');
-    }
-  }
-
-  formatDateForInput(dateString) {
-    try {
-      const date = new Date(dateString);
-      return date.toISOString().split('T')[0];
-    } catch (err) {
-      console.error('Error formatting date:', err);
-      return '';
-    }
+    const state = employeeStore.getState();
+    this.employeeData = state.editingEmployee;
   }
 
   async handleFormSubmit(e) {
@@ -131,7 +125,7 @@ export class EditEmployeePage extends i18nMixin(LitElement) {
 
       if (confirmed) {
         await employeeService.updateEmployee(this.employeeData.id, formData);
-        sessionStorage.removeItem('editEmployee');
+        employeeStore.getState().clearEditingEmployee();
 
         await confirmationStore.getState().show({
           title: this.t('common.success'),

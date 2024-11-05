@@ -5,6 +5,7 @@ import {i18nMixin} from '../localization/i18n.js';
 import employeeService from '../../mockApi/service.js';
 
 import {confirmationStore} from '../stores/confirmation-store.js';
+import {employeeStore} from '../stores/employee-store.js';
 
 import '../components/custom-table.js';
 import '../components/custom-list.js';
@@ -195,7 +196,7 @@ export class EmployeesPage extends i18nMixin(LitElement) {
   }
 
   async handleEdit(employee) {
-    sessionStorage.setItem('editEmployee', JSON.stringify(employee));
+    employeeStore.getState().setEditingEmployee(employee);
     Router.go(`/edit-employee/${employee.id}`);
   }
 
