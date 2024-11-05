@@ -18,8 +18,18 @@ class EmployeeService {
     this.initializeData();
   }
 
-  searchInField(value, searchTerm) {
-    return value?.toString().toLowerCase().includes(searchTerm.toLowerCase());
+  searchInField(value, searchTerms) {
+    if (!value) return false;
+    const fieldValue = value.toString().toLowerCase();
+    return searchTerms.every((term) => fieldValue.includes(term.toLowerCase()));
+  }
+
+  searchInCombinedFields(employee, searchTerms) {
+    const combinedFields =
+      `${employee.firstName} ${employee.lastName} ${employee.email} ${employee.phone}`.toLowerCase();
+    return searchTerms.every((term) =>
+      combinedFields.includes(term.toLowerCase())
+    );
   }
 
   async getEmployees({
@@ -39,12 +49,22 @@ class EmployeeService {
         let filteredEmployees = [...employeeStore.getState().employees];
 
         if (searchTerm) {
+          // Split search term by spaces and filter out empty strings
+          const searchTerms = searchTerm
+            .split(/\s+/)
+            .filter((term) => term.length > 0);
+
           filteredEmployees = filteredEmployees.filter((emp) => {
+            // Try matching individual fields first
+            const matchesIndividualFields =
+              this.searchInField(emp.firstName, searchTerms) ||
+              this.searchInField(emp.lastName, searchTerms) ||
+              this.searchInField(emp.email, searchTerms) ||
+              this.searchInField(emp.phone, searchTerms);
+
             return (
-              this.searchInField(emp.firstName, searchTerm) ||
-              this.searchInField(emp.lastName, searchTerm) ||
-              this.searchInField(emp.email, searchTerm) ||
-              this.searchInField(emp.phone, searchTerm)
+              matchesIndividualFields ||
+              this.searchInCombinedFields(emp, searchTerms)
             );
           });
         }
